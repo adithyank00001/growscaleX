@@ -1,8 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { createBrowserSupabaseClient } from "@/lib/supabase/browser"
+import { useActionState } from "react"
+import { signIn, type LoginState } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,32 +13,10 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+const initialState: LoginState = { error: null }
+
 export default function LoginPage() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-
-    const supabase = createBrowserSupabaseClient()
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (authError) {
-      setError(authError.message)
-      setLoading(false)
-    } else {
-      router.push("/dashboard")
-      router.refresh()
-    }
-  }
+  const [state, formAction, pending] = useActionState(signIn, initialState)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
@@ -50,16 +27,15 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={formAction} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 autoComplete="email"
                 placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -68,23 +44,22 @@ export default function LoginPage() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 autoComplete="current-password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
 
-            {error && (
+            {state?.error ? (
               <p className="text-sm text-destructive rounded bg-destructive/10 px-3 py-2">
-                {error}
+                {state.error}
               </p>
-            )}
+            ) : null}
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in…" : "Sign In"}
+            <Button type="submit" className="w-full" disabled={pending}>
+              {pending ? "Signing in…" : "Sign In"}
             </Button>
           </form>
         </CardContent>

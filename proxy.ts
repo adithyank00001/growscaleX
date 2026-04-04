@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, responseHeaders) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -20,6 +20,13 @@ export async function proxy(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
+          if (responseHeaders && typeof responseHeaders === "object") {
+            for (const [key, headerValue] of Object.entries(responseHeaders)) {
+              if (typeof headerValue === "string") {
+                supabaseResponse.headers.set(key, headerValue)
+              }
+            }
+          }
         },
       },
     }
@@ -32,19 +39,32 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  function copyAuthCookiesTo(response: NextResponse) {
+    for (const c of supabaseResponse.cookies.getAll()) {
+      const { name, value, ...opts } = c
+      response.cookies.set(name, value, opts)
+    }
+    return response
+  }
+
   // Unauthenticated user tries to access /dashboard → redirect to /login
   if (!user && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", request.url))
+    const res = NextResponse.redirect(new URL("/login", request.url))
+    return copyAuthCookiesTo(res)
   }
 
   // Authenticated user visits /login → redirect to /dashboard
   if (user && pathname === "/login") {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+    const res = NextResponse.redirect(new URL("/dashboard", request.url))
+    return copyAuthCookiesTo(res)
   }
 
   return supabaseResponse
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login"],
+  // Refresh session on pages; skip /api (Meta webhooks, etc.)
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 }

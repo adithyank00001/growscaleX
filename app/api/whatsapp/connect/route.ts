@@ -130,18 +130,13 @@ export async function POST(request: Request) {
     )
   }
 
-  const countryTemplate =
-    process.env.TEMPLATE_COUNTRY_NAME ?? "welcome_country_selection"
-  const budgetTemplate =
-    process.env.TEMPLATE_BUDGET_NAME ?? "budget_qualification"
-
   const row: WhatsappAccountInsert = {
     user_id: user.id,
     waba_id: wabaId,
     phone_number_id: phoneNumberId,
     access_token: accessToken,
-    country_template: countryTemplate,
-    budget_template: budgetTemplate,
+    country_template: null,
+    budget_template: null,
     updated_at: new Date().toISOString(),
   }
 

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServiceRoleClient } from "@/lib/supabase/server"
 import {
   getEnvMessagingContext,
-  sendBudgetQualificationTemplate,
-  sendCountrySelectionTemplate,
+  sendInteractiveMessage,
   type WhatsappSendContext,
 } from "@/lib/whatsapp"
 import type { LeadInsert } from "@/lib/supabase/types"
@@ -54,6 +53,77 @@ interface MetaWebhookPayload {
   }>
 }
 
+// ─── Free interactive funnel (service window) ────────────────────────────────
+
+const COUNTRY_INTERACTIVE_BODY =
+  "Hello! Which country are you interested in studying in?"
+
+const BUDGET_INTERACTIVE_BODY =
+  "Great! What is your estimated tuition budget?"
+
+function countryWelcomeContent(): Record<string, unknown> {
+  return {
+    body: { text: COUNTRY_INTERACTIVE_BODY },
+    action: {
+      buttons: [
+        { type: "reply", reply: { id: "country_uk", title: "UK" } },
+        { type: "reply", reply: { id: "country_usa", title: "USA" } },
+        { type: "reply", reply: { id: "country_canada", title: "Canada" } },
+      ],
+    },
+  }
+}
+
+function budgetQuestionContent(): Record<string, unknown> {
+  return {
+    body: { text: BUDGET_INTERACTIVE_BODY },
+    action: {
+      buttons: [
+        { type: "reply", reply: { id: "budget_10k_20k", title: "$10k-$20k" } },
+        { type: "reply", reply: { id: "budget_20k_30k", title: "$20k-$30k" } },
+        { type: "reply", reply: { id: "budget_30k_plus", title: "$30k+" } },
+      ],
+    },
+  }
+}
+
+async function sendCountryWelcome(
+  to: string,
+  ctx: WhatsappSendContext
+): Promise<void> {
+  await sendInteractiveMessage({
+    to,
+    type: "button",
+    content: countryWelcomeContent(),
+    phoneNumberId: ctx.phoneNumberId,
+    accessToken: ctx.accessToken,
+  })
+}
+
+async function sendBudgetQuestion(
+  to: string,
+  ctx: WhatsappSendContext
+): Promise<void> {
+  await sendInteractiveMessage({
+    to,
+    type: "button",
+    content: budgetQuestionContent(),
+    phoneNumberId: ctx.phoneNumberId,
+    accessToken: ctx.accessToken,
+  })
+}
+
+async function safeInteractiveSend(
+  label: string,
+  fn: () => Promise<void>
+): Promise<void> {
+  try {
+    await fn()
+  } catch (e) {
+    console.error(`[webhook] ${label} failed:`, e)
+  }
+}
+
 // ─── GET — Meta webhook verification ─────────────────────────────────────────
 
 export async function GET(request: NextRequest) {
@@ -84,7 +154,6 @@ export async function POST(request: NextRequest) {
   try {
     const value = body?.entry?.[0]?.changes?.[0]?.value
 
-    // No messages array → status update (delivered/read) — ignore silently
     if (!value?.messages?.length) {
       return new NextResponse("OK", { status: 200 })
     }
@@ -96,7 +165,7 @@ export async function POST(request: NextRequest) {
     if (phoneNumberIdMeta) {
       const { data: account } = await supabase
         .from("whatsapp_accounts")
-        .select("*")
+        .select("phone_number_id, access_token")
         .eq("phone_number_id", phoneNumberIdMeta)
         .maybeSingle()
 
@@ -104,8 +173,6 @@ export async function POST(request: NextRequest) {
         messagingCtx = {
           phoneNumberId: account.phone_number_id,
           accessToken: account.access_token,
-          countryTemplate: account.country_template,
-          budgetTemplate: account.budget_template,
         }
       }
     }
@@ -116,7 +183,6 @@ export async function POST(request: NextRequest) {
     const message = value.messages[0]
     const contact = value.contacts?.[0]
 
-    // ── 1. Ignore echoes (business-originated messages) ──────────────────────
     if (message.is_echo === true || message.type === "system") {
       return new NextResponse("OK", { status: 200 })
     }
@@ -129,10 +195,6 @@ export async function POST(request: NextRequest) {
 
     const fullName = contact?.profile?.name ?? null
 
-    // Leads remain keyed by phone_number only. Multiple WhatsApp tenants can share
-    // one lead row for the same customer phone (MVP limitation).
-
-    // ── 2. Upsert lead (create on first contact, update name if provided) ────
     const upsertPayload: LeadInsert = {
       phone_number: fromPhone,
       full_name: fullName,
@@ -150,7 +212,7 @@ export async function POST(request: NextRequest) {
       return new NextResponse("OK", { status: 200 })
     }
 
-    // ── 3. Inbound text — start funnel at Step 1, or pause if mid-funnel ───────
+    // ── Inbound text — welcome via interactive buttons (no template) ─────────
     if (message.type === "text") {
       if (lead.is_paused) {
         return new NextResponse("OK", { status: 200 })
@@ -162,9 +224,13 @@ export async function POST(request: NextRequest) {
 
       if (atFunnelEntry) {
         if (!messagingCtx) {
-          console.error("[webhook] Cannot send country template: no credentials")
+          console.error(
+            "[webhook] Cannot send country welcome: no Cloud API credentials"
+          )
         } else {
-          await sendCountrySelectionTemplate(fromPhone, messagingCtx)
+          await safeInteractiveSend("country welcome", () =>
+            sendCountryWelcome(fromPhone, messagingCtx!)
+          )
         }
         return new NextResponse("OK", { status: 200 })
       }
@@ -179,21 +245,20 @@ export async function POST(request: NextRequest) {
       return new NextResponse("OK", { status: 200 })
     }
 
-    // ── 4. is_paused gate — hard stop for automation ──────────────────────────
     if (lead.is_paused) {
       console.log(`[webhook] Ignoring message from paused lead ${fromPhone}`)
       return new NextResponse("OK", { status: 200 })
     }
 
-    // ── 5. Linear funnel — button_reply only ─────────────────────────────────
+    // ── Interactive replies (button taps) ─────────────────────────────────────
     if (
       message.type === "interactive" &&
       message.interactive?.type === "button_reply"
     ) {
+      const replyId = message.interactive.button_reply?.id ?? ""
       const buttonTitle = message.interactive.button_reply?.title ?? ""
 
-      if (lead.current_step === 1) {
-        // Country selection received → advance to Step 2, send budget template
+      if (lead.current_step === 1 && replyId.startsWith("country_")) {
         await supabase
           .from("leads")
           .update({
@@ -204,14 +269,19 @@ export async function POST(request: NextRequest) {
           .eq("phone_number", fromPhone)
 
         if (!messagingCtx) {
-          console.error("[webhook] Cannot send budget template: no credentials")
+          console.error(
+            "[webhook] Cannot send budget question: no Cloud API credentials"
+          )
         } else {
-          await sendBudgetQualificationTemplate(fromPhone, messagingCtx)
+          await safeInteractiveSend("budget question", () =>
+            sendBudgetQuestion(fromPhone, messagingCtx!)
+          )
         }
         console.log(`[webhook] ${fromPhone} → Step 2 (country: ${buttonTitle})`)
-
-      } else if (lead.current_step === 2) {
-        // Budget selection received → qualify lead, Step 3
+      } else if (
+        lead.current_step === 2 &&
+        replyId.startsWith("budget_")
+      ) {
         await supabase
           .from("leads")
           .update({
@@ -222,17 +292,18 @@ export async function POST(request: NextRequest) {
           })
           .eq("phone_number", fromPhone)
 
-        console.log(`[webhook] ${fromPhone} → Step 3 qualified (budget: ${buttonTitle})`)
-
+        console.log(
+          `[webhook] ${fromPhone} → Step 3 qualified (budget: ${buttonTitle})`
+        )
       } else {
-        // Lead is at step 3 (already qualified) — nothing to do
-        console.log(`[webhook] ${fromPhone} already at step ${lead.current_step}, ignoring`)
+        console.log(
+          `[webhook] ${fromPhone} unexpected interactive at step ${lead.current_step} id=${replyId}`
+        )
       }
     }
 
     return new NextResponse("OK", { status: 200 })
   } catch (error) {
-    // Always return 200 so Meta does not retry-storm the endpoint
     console.error("[webhook] Unhandled error:", error)
     return new NextResponse("OK", { status: 200 })
   }

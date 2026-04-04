@@ -3,14 +3,64 @@ import axios from "axios"
 const GRAPH_API_VERSION = "v19.0"
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`
 
-/** Credentials + optional per-tenant template names for outbound Cloud API calls. */
+/** Credentials for Cloud API sends (token + phone number id). */
 export interface WhatsappSendContext {
   phoneNumberId: string
   accessToken: string
-  /** Overrides TEMPLATE_COUNTRY_NAME when set */
-  countryTemplate?: string | null
-  /** Overrides TEMPLATE_BUDGET_NAME when set */
-  budgetTemplate?: string | null
+}
+
+export type InteractiveMessageType = "button" | "list"
+
+export interface SendInteractiveMessageParams {
+  to: string
+  type: InteractiveMessageType
+  /** Merged into the Graph `interactive` object (e.g. `body`, `action`, optional `header` / `footer`). */
+  content: Record<string, unknown>
+  phoneNumberId: string
+  accessToken: string
+}
+
+/**
+ * Sends a free-form interactive message (reply buttons or list) inside the customer service window.
+ */
+export async function sendInteractiveMessage({
+  to,
+  type,
+  content,
+  phoneNumberId,
+  accessToken,
+}: SendInteractiveMessageParams): Promise<void> {
+  try {
+    await axios.post(
+      `${BASE_URL}/${phoneNumberId}/messages`,
+      {
+        messaging_product: "whatsapp",
+        to,
+        type: "interactive",
+        interactive: {
+          ...content,
+          type,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      console.error(
+        "[whatsapp] interactive API error:",
+        err.response?.status,
+        JSON.stringify(err.response?.data)
+      )
+    } else {
+      console.error("[whatsapp] interactive unexpected error:", err)
+    }
+    throw err
+  }
 }
 
 interface SendTemplateOptions extends WhatsappSendContext {
@@ -20,7 +70,7 @@ interface SendTemplateOptions extends WhatsappSendContext {
 }
 
 /**
- * Low-level template sender. Sends a WhatsApp template message via Meta Cloud API.
+ * Sends a WhatsApp template message (marketing / outside session window).
  */
 export async function sendTemplate({
   to,
@@ -51,12 +101,12 @@ export async function sendTemplate({
   } catch (err) {
     if (axios.isAxiosError(err)) {
       console.error(
-        "[whatsapp] API error:",
+        "[whatsapp] template API error:",
         err.response?.status,
         JSON.stringify(err.response?.data)
       )
     } else {
-      console.error("[whatsapp] Unexpected error:", err)
+      console.error("[whatsapp] template unexpected error:", err)
     }
     throw err
   }
@@ -71,42 +121,4 @@ export function getEnvMessagingContext(): WhatsappSendContext | null {
     return null
   }
   return { phoneNumberId, accessToken }
-}
-
-/**
- * Sends the country-selection (welcome) template — Step 1 of the funnel.
- */
-export function sendCountrySelectionTemplate(
-  to: string,
-  ctx: WhatsappSendContext
-): Promise<void> {
-  const name =
-    ctx.countryTemplate?.trim() ||
-    process.env.TEMPLATE_COUNTRY_NAME ||
-    "welcome_country_selection"
-  return sendTemplate({
-    to,
-    templateName: name,
-    phoneNumberId: ctx.phoneNumberId,
-    accessToken: ctx.accessToken,
-  })
-}
-
-/**
- * Sends the budget-qualification template — Step 2 of the funnel.
- */
-export function sendBudgetQualificationTemplate(
-  to: string,
-  ctx: WhatsappSendContext
-): Promise<void> {
-  const name =
-    ctx.budgetTemplate?.trim() ||
-    process.env.TEMPLATE_BUDGET_NAME ||
-    "budget_qualification"
-  return sendTemplate({
-    to,
-    templateName: name,
-    phoneNumberId: ctx.phoneNumberId,
-    accessToken: ctx.accessToken,
-  })
 }

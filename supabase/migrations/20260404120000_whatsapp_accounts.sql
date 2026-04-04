@@ -1,5 +1,5 @@
--- Run via Supabase SQL Editor or `supabase db push` if you use the CLI.
 -- WhatsApp Embedded Signup: one row per Cloud API phone number (tenant routing).
+-- Applied via Supabase MCP (migration whatsapp_accounts_embedded_signup) or SQL Editor.
 
 create table if not exists public.whatsapp_accounts (
   id uuid primary key default gen_random_uuid(),
@@ -18,6 +18,11 @@ create index if not exists whatsapp_accounts_user_id_idx
   on public.whatsapp_accounts (user_id);
 
 alter table public.whatsapp_accounts enable row level security;
+
+drop policy if exists "Users can select own whatsapp_accounts" on public.whatsapp_accounts;
+drop policy if exists "Users can insert own whatsapp_accounts" on public.whatsapp_accounts;
+drop policy if exists "Users can update own whatsapp_accounts" on public.whatsapp_accounts;
+drop policy if exists "Users can delete own whatsapp_accounts" on public.whatsapp_accounts;
 
 create policy "Users can select own whatsapp_accounts"
   on public.whatsapp_accounts
