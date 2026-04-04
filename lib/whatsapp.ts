@@ -3,7 +3,17 @@ import axios from "axios"
 const GRAPH_API_VERSION = "v19.0"
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`
 
-interface SendTemplateOptions {
+/** Credentials + optional per-tenant template names for outbound Cloud API calls. */
+export interface WhatsappSendContext {
+  phoneNumberId: string
+  accessToken: string
+  /** Overrides TEMPLATE_COUNTRY_NAME when set */
+  countryTemplate?: string | null
+  /** Overrides TEMPLATE_BUDGET_NAME when set */
+  budgetTemplate?: string | null
+}
+
+interface SendTemplateOptions extends WhatsappSendContext {
   to: string
   templateName: string
   languageCode?: string
@@ -16,15 +26,9 @@ export async function sendTemplate({
   to,
   templateName,
   languageCode = "en",
+  phoneNumberId,
+  accessToken,
 }: SendTemplateOptions): Promise<void> {
-  const phoneNumberId = process.env.PHONE_NUMBER_ID
-  const token = process.env.WHATSAPP_TOKEN
-
-  if (!phoneNumberId || !token) {
-    console.error("[whatsapp] Missing PHONE_NUMBER_ID or WHATSAPP_TOKEN env vars")
-    return
-  }
-
   try {
     await axios.post(
       `${BASE_URL}/${phoneNumberId}/messages`,
@@ -39,7 +43,7 @@ export async function sendTemplate({
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       }
@@ -58,24 +62,51 @@ export async function sendTemplate({
   }
 }
 
+/** Reads default Cloud API credentials from env (single-tenant fallback). */
+export function getEnvMessagingContext(): WhatsappSendContext | null {
+  const phoneNumberId = process.env.PHONE_NUMBER_ID
+  const accessToken = process.env.WHATSAPP_TOKEN
+  if (!phoneNumberId || !accessToken) {
+    console.error("[whatsapp] Missing PHONE_NUMBER_ID or WHATSAPP_TOKEN env vars")
+    return null
+  }
+  return { phoneNumberId, accessToken }
+}
+
 /**
  * Sends the country-selection (welcome) template — Step 1 of the funnel.
- * Template name is read from TEMPLATE_COUNTRY_NAME env var.
  */
-export function sendCountrySelectionTemplate(to: string): Promise<void> {
+export function sendCountrySelectionTemplate(
+  to: string,
+  ctx: WhatsappSendContext
+): Promise<void> {
+  const name =
+    ctx.countryTemplate?.trim() ||
+    process.env.TEMPLATE_COUNTRY_NAME ||
+    "welcome_country_selection"
   return sendTemplate({
     to,
-    templateName: process.env.TEMPLATE_COUNTRY_NAME ?? "welcome_country_selection",
+    templateName: name,
+    phoneNumberId: ctx.phoneNumberId,
+    accessToken: ctx.accessToken,
   })
 }
 
 /**
  * Sends the budget-qualification template — Step 2 of the funnel.
- * Template name is read from TEMPLATE_BUDGET_NAME env var.
  */
-export function sendBudgetQualificationTemplate(to: string): Promise<void> {
+export function sendBudgetQualificationTemplate(
+  to: string,
+  ctx: WhatsappSendContext
+): Promise<void> {
+  const name =
+    ctx.budgetTemplate?.trim() ||
+    process.env.TEMPLATE_BUDGET_NAME ||
+    "budget_qualification"
   return sendTemplate({
     to,
-    templateName: process.env.TEMPLATE_BUDGET_NAME ?? "budget_qualification",
+    templateName: name,
+    phoneNumberId: ctx.phoneNumberId,
+    accessToken: ctx.accessToken,
   })
 }

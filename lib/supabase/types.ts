@@ -215,6 +215,42 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_accounts: {
+        Row: {
+          access_token: string
+          budget_template: string | null
+          country_template: string | null
+          created_at: string
+          id: string
+          phone_number_id: string
+          updated_at: string
+          user_id: string
+          waba_id: string
+        }
+        Insert: {
+          access_token: string
+          budget_template?: string | null
+          country_template?: string | null
+          created_at?: string
+          id?: string
+          phone_number_id: string
+          updated_at?: string
+          user_id: string
+          waba_id: string
+        }
+        Update: {
+          access_token?: string
+          budget_template?: string | null
+          country_template?: string | null
+          created_at?: string
+          id?: string
+          phone_number_id?: string
+          updated_at?: string
+          user_id?: string
+          waba_id?: string
+        }
+        Relationships: []
+      }
       recruiter_selections: {
         Row: {
           candidate_id: string | null
@@ -323,3 +359,14 @@ export type LeadInsert = Database["public"]["Tables"]["leads"]["Insert"]
 
 /** Update payload for `leads` */
 export type LeadUpdate = Database["public"]["Tables"]["leads"]["Update"]
+
+/** A single row from the `whatsapp_accounts` table */
+export type WhatsappAccount = Database["public"]["Tables"]["whatsapp_accounts"]["Row"]
+
+/** Insert payload for `whatsapp_accounts` */
+export type WhatsappAccountInsert =
+  Database["public"]["Tables"]["whatsapp_accounts"]["Insert"]
+
+/** Update payload for `whatsapp_accounts` */
+export type WhatsappAccountUpdate =
+  Database["public"]["Tables"]["whatsapp_accounts"]["Update"]

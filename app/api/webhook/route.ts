@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServiceRoleClient } from "@/lib/supabase/server"
 import {
+  getEnvMessagingContext,
   sendBudgetQualificationTemplate,
   sendCountrySelectionTemplate,
+  type WhatsappSendContext,
 } from "@/lib/whatsapp"
 import type { LeadInsert } from "@/lib/supabase/types"
 
@@ -35,6 +37,10 @@ interface MetaContact {
 
 interface MetaValue {
   messaging_product: string
+  metadata?: {
+    display_phone_number?: string
+    phone_number_id?: string
+  }
   contacts?: MetaContact[]
   messages?: MetaMessage[]
   statuses?: unknown[]
@@ -83,6 +89,30 @@ export async function POST(request: NextRequest) {
       return new NextResponse("OK", { status: 200 })
     }
 
+    const supabase = createServiceRoleClient()
+    const phoneNumberIdMeta = value.metadata?.phone_number_id
+
+    let messagingCtx: WhatsappSendContext | null = null
+    if (phoneNumberIdMeta) {
+      const { data: account } = await supabase
+        .from("whatsapp_accounts")
+        .select("*")
+        .eq("phone_number_id", phoneNumberIdMeta)
+        .maybeSingle()
+
+      if (account) {
+        messagingCtx = {
+          phoneNumberId: account.phone_number_id,
+          accessToken: account.access_token,
+          countryTemplate: account.country_template,
+          budgetTemplate: account.budget_template,
+        }
+      }
+    }
+    if (!messagingCtx) {
+      messagingCtx = getEnvMessagingContext()
+    }
+
     const message = value.messages[0]
     const contact = value.contacts?.[0]
 
@@ -98,7 +128,9 @@ export async function POST(request: NextRequest) {
     }
 
     const fullName = contact?.profile?.name ?? null
-    const supabase = createServiceRoleClient()
+
+    // Leads remain keyed by phone_number only. Multiple WhatsApp tenants can share
+    // one lead row for the same customer phone (MVP limitation).
 
     // ── 2. Upsert lead (create on first contact, update name if provided) ────
     const upsertPayload: LeadInsert = {
@@ -129,7 +161,11 @@ export async function POST(request: NextRequest) {
         (lead.country_choice == null || lead.country_choice === "")
 
       if (atFunnelEntry) {
-        await sendCountrySelectionTemplate(fromPhone)
+        if (!messagingCtx) {
+          console.error("[webhook] Cannot send country template: no credentials")
+        } else {
+          await sendCountrySelectionTemplate(fromPhone, messagingCtx)
+        }
         return new NextResponse("OK", { status: 200 })
       }
 
@@ -167,7 +203,11 @@ export async function POST(request: NextRequest) {
           })
           .eq("phone_number", fromPhone)
 
-        await sendBudgetQualificationTemplate(fromPhone)
+        if (!messagingCtx) {
+          console.error("[webhook] Cannot send budget template: no credentials")
+        } else {
+          await sendBudgetQualificationTemplate(fromPhone, messagingCtx)
+        }
         console.log(`[webhook] ${fromPhone} → Step 2 (country: ${buttonTitle})`)
 
       } else if (lead.current_step === 2) {
