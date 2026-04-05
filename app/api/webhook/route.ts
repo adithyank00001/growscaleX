@@ -5,7 +5,7 @@ import {
   sendInteractiveMessage,
   type WhatsappSendContext,
 } from "@/lib/whatsapp"
-import type { LeadInsert } from "@/lib/supabase/types"
+import type { Json, LeadInsert } from "@/lib/supabase/types"
 
 // ─── Meta payload types (minimal surface) ────────────────────────────────────
 
@@ -24,6 +24,8 @@ interface MetaMessage {
   id: string
   type: "text" | "interactive" | "system" | string
   is_echo?: boolean
+  /** Present on some echo / coexistence payloads (recipient customer). */
+  to?: string
   text?: { body: string }
   interactive?: Interactive
   context?: { from: string; id: string }
@@ -97,6 +99,7 @@ async function sendCountryWelcome(
     content: countryWelcomeContent(),
     phoneNumberId: ctx.phoneNumberId,
     accessToken: ctx.accessToken,
+    is_coexistence: ctx.is_coexistence,
   })
 }
 
@@ -110,7 +113,65 @@ async function sendBudgetQuestion(
     content: budgetQuestionContent(),
     phoneNumberId: ctx.phoneNumberId,
     accessToken: ctx.accessToken,
+    is_coexistence: ctx.is_coexistence,
   })
+}
+
+/** Customer phone when business sends an echo (mobile app); best-effort across payload shapes. */
+function echoRecipientPhone(
+  message: MetaMessage,
+  contact?: MetaContact
+): string | null {
+  const direct = message.to?.trim()
+  if (direct) return direct
+  const wa = contact?.wa_id?.trim()
+  if (wa) return wa
+  return null
+}
+
+/** Log mobile / Business App echoes for dashboard sync — does not run the bot funnel. */
+async function persistCoexistenceEcho(
+  supabase: ReturnType<typeof createServiceRoleClient>,
+  phoneNumberIdMeta: string | undefined,
+  message: MetaMessage,
+  value: MetaValue,
+  contact?: MetaContact
+): Promise<void> {
+  const textBody = message.text?.body ?? null
+  const payload = {
+    message,
+    metadata: value.metadata ?? null,
+    contacts: value.contacts ?? null,
+  } as unknown as Json
+
+  const { error: insertErr } = await supabase.from("whatsapp_sync_messages").insert({
+    phone_number_id: phoneNumberIdMeta ?? null,
+    is_echo: true,
+    wa_message_id: message.id,
+    from_wa_id: message.from,
+    to_wa_id: echoRecipientPhone(message, contact),
+    message_type: message.type,
+    text_body: textBody ? textBody.slice(0, 4000) : null,
+    payload,
+  })
+
+  if (insertErr) {
+    console.error("[webhook] whatsapp_sync_messages insert error:", insertErr)
+  }
+
+  const customerPhone = echoRecipientPhone(message, contact)
+  if (customerPhone) {
+    const { error: leadErr } = await supabase.from("leads").upsert(
+      {
+        phone_number: customerPhone,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "phone_number" }
+    )
+    if (leadErr) {
+      console.error("[webhook] lead upsert (echo sync) error:", leadErr)
+    }
+  }
 }
 
 async function safeInteractiveSend(
@@ -165,7 +226,7 @@ export async function POST(request: NextRequest) {
     if (phoneNumberIdMeta) {
       const { data: account } = await supabase
         .from("whatsapp_accounts")
-        .select("phone_number_id, access_token")
+        .select("phone_number_id, access_token, is_coexistence")
         .eq("phone_number_id", phoneNumberIdMeta)
         .maybeSingle()
 
@@ -173,6 +234,7 @@ export async function POST(request: NextRequest) {
         messagingCtx = {
           phoneNumberId: account.phone_number_id,
           accessToken: account.access_token,
+          is_coexistence: account.is_coexistence === true,
         }
       }
     }
@@ -183,7 +245,20 @@ export async function POST(request: NextRequest) {
     const message = value.messages[0]
     const contact = value.contacts?.[0]
 
-    if (message.is_echo === true || message.type === "system") {
+    if (message.type === "system") {
+      return new NextResponse("OK", { status: 200 })
+    }
+
+    // Coexistence: messages sent from the WhatsApp Business mobile app arrive as echoes.
+    // Persist for dashboard sync; never auto-reply (no interactive funnel).
+    if (message.is_echo === true) {
+      await persistCoexistenceEcho(
+        supabase,
+        phoneNumberIdMeta,
+        message,
+        value,
+        contact
+      )
       return new NextResponse("OK", { status: 200 })
     }
 

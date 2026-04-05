@@ -222,6 +222,7 @@ export type Database = {
           country_template: string | null
           created_at: string
           id: string
+          is_coexistence: boolean
           phone_number_id: string
           updated_at: string
           user_id: string
@@ -233,6 +234,7 @@ export type Database = {
           country_template?: string | null
           created_at?: string
           id?: string
+          is_coexistence?: boolean
           phone_number_id: string
           updated_at?: string
           user_id: string
@@ -244,10 +246,50 @@ export type Database = {
           country_template?: string | null
           created_at?: string
           id?: string
+          is_coexistence?: boolean
           phone_number_id?: string
           updated_at?: string
           user_id?: string
           waba_id?: string
+        }
+        Relationships: []
+      }
+      whatsapp_sync_messages: {
+        Row: {
+          created_at: string
+          from_wa_id: string | null
+          id: string
+          is_echo: boolean
+          message_type: string
+          payload: Json | null
+          phone_number_id: string | null
+          text_body: string | null
+          to_wa_id: string | null
+          wa_message_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          from_wa_id?: string | null
+          id?: string
+          is_echo?: boolean
+          message_type: string
+          payload?: Json | null
+          phone_number_id?: string | null
+          text_body?: string | null
+          to_wa_id?: string | null
+          wa_message_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          from_wa_id?: string | null
+          id?: string
+          is_echo?: boolean
+          message_type?: string
+          payload?: Json | null
+          phone_number_id?: string | null
+          text_body?: string | null
+          to_wa_id?: string | null
+          wa_message_id?: string | null
         }
         Relationships: []
       }

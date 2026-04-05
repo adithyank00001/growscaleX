@@ -3,10 +3,28 @@ import axios from "axios"
 const GRAPH_API_VERSION = "v19.0"
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`
 
+/** Meta coexistence numbers are subject to ~20 MPS outbound; space sends ~55ms apart per phone id. */
+const COEXISTENCE_MIN_INTERVAL_MS = 55
+const coexistenceLastSentMs = new Map<string, number>()
+
+async function throttleCoexistenceMps(phoneNumberId: string): Promise<void> {
+  const now = Date.now()
+  const last = coexistenceLastSentMs.get(phoneNumberId) ?? 0
+  const elapsed = now - last
+  if (elapsed < COEXISTENCE_MIN_INTERVAL_MS) {
+    await new Promise((r) =>
+      setTimeout(r, COEXISTENCE_MIN_INTERVAL_MS - elapsed)
+    )
+  }
+  coexistenceLastSentMs.set(phoneNumberId, Date.now())
+}
+
 /** Credentials for Cloud API sends (token + phone number id). */
 export interface WhatsappSendContext {
   phoneNumberId: string
   accessToken: string
+  /** True when this Cloud API number is linked via WhatsApp Business App coexistence (stricter throughput). */
+  is_coexistence?: boolean
 }
 
 export type InteractiveMessageType = "button" | "list"
@@ -18,6 +36,8 @@ export interface SendInteractiveMessageParams {
   content: Record<string, unknown>
   phoneNumberId: string
   accessToken: string
+  /** When true, applies coexistence-friendly spacing before the Graph request (~20 MPS). */
+  is_coexistence?: boolean
 }
 
 /**
@@ -29,7 +49,12 @@ export async function sendInteractiveMessage({
   content,
   phoneNumberId,
   accessToken,
+  is_coexistence,
 }: SendInteractiveMessageParams): Promise<void> {
+  if (is_coexistence) {
+    await throttleCoexistenceMps(phoneNumberId)
+  }
+
   try {
     await axios.post(
       `${BASE_URL}/${phoneNumberId}/messages`,
@@ -120,5 +145,9 @@ export function getEnvMessagingContext(): WhatsappSendContext | null {
     console.error("[whatsapp] Missing PHONE_NUMBER_ID or WHATSAPP_TOKEN env vars")
     return null
   }
-  return { phoneNumberId, accessToken }
+  return {
+    phoneNumberId,
+    accessToken,
+    is_coexistence: process.env.WHATSAPP_COEXISTENCE === "true",
+  }
 }

@@ -11,6 +11,8 @@ const bodySchema = z.object({
   code: z.string().min(1),
   waba_id: z.string().min(1).optional(),
   phone_number_id: z.string().min(1).optional(),
+  /** Set true when onboarding via WhatsApp Business App (coexistence / QR). */
+  is_coexistence: z.boolean().optional(),
 })
 
 async function fetchFirstPhoneNumberId(
@@ -51,7 +53,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 })
   }
 
-  const { code, waba_id: wabaIdIn, phone_number_id: phoneIdIn } = parsed.data
+  const {
+    code,
+    waba_id: wabaIdIn,
+    phone_number_id: phoneIdIn,
+    is_coexistence: isCoexistenceIn,
+  } = parsed.data
 
   const supabase = await createServerSupabaseClient()
   const {
@@ -97,6 +104,9 @@ export async function POST(request: Request) {
       )
     }
     accessToken = token
+    console.log(
+      "[whatsapp/connect] OAuth code exchanged (Cloud API + coexistence onboarding use the same token endpoint)"
+    )
   } catch (err) {
     if (axios.isAxiosError(err)) {
       console.error(
@@ -130,6 +140,23 @@ export async function POST(request: Request) {
     )
   }
 
+  const wabaNumeric = /^\d+$/.test(wabaId)
+  const phoneIdNumeric = /^\d+$/.test(phoneNumberId)
+  console.log("[whatsapp/connect] Resolved ids for whatsapp_accounts row:", {
+    waba_id: wabaId,
+    phone_number_id: phoneNumberId,
+    waba_id_numeric_id_shape: wabaNumeric,
+    phone_number_id_numeric_id_shape: phoneIdNumeric,
+    coexistence_flow: isCoexistenceIn === true,
+  })
+  if (!wabaNumeric || !phoneIdNumeric) {
+    console.warn(
+      "[whatsapp/connect] Unexpected id format (expected numeric Graph ids). Saving anyway."
+    )
+  }
+
+  const isCoexistence = isCoexistenceIn === true
+
   const row: WhatsappAccountInsert = {
     user_id: user.id,
     waba_id: wabaId,
@@ -137,6 +164,7 @@ export async function POST(request: Request) {
     access_token: accessToken,
     country_template: null,
     budget_template: null,
+    is_coexistence: isCoexistence,
     updated_at: new Date().toISOString(),
   }
 

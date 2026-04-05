@@ -22,7 +22,12 @@ export default async function DashboardPage() {
     .order("updated_at", { ascending: false })
 
   if (error) {
-    console.error("[dashboard] Failed to fetch leads:", error)
+    console.error("[dashboard] Failed to fetch leads:", {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+    })
   }
 
   const { data: waRows } = await supabase
@@ -37,6 +42,17 @@ export default async function DashboardPage() {
     ? `Connected · …${primaryPhoneId.slice(-4)}`
     : null
 
+  const metaAppId = (
+    process.env.NEXT_PUBLIC_META_APP_ID ??
+    process.env.META_APP_ID ??
+    ""
+  ).trim()
+  const metaConfigId = (
+    process.env.NEXT_PUBLIC_META_CONFIG_ID ??
+    process.env.META_CONFIG_ID ??
+    ""
+  ).trim()
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -48,7 +64,11 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="flex flex-col items-end gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <WhatsAppConnectButton connectionSummary={connectionSummary} />
+            <WhatsAppConnectButton
+              connectionSummary={connectionSummary}
+              metaAppId={metaAppId}
+              metaConfigId={metaConfigId}
+            />
             <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
