@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const GRAPH_API_VERSION = "v19.0"
+const GRAPH_API_VERSION = "v25.0"
 const BASE_URL = `https://graph.facebook.com/${GRAPH_API_VERSION}`
 
 /** Meta coexistence numbers are subject to ~20 MPS outbound; space sends ~55ms apart per phone id. */

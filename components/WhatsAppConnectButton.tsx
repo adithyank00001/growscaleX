@@ -3,8 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { waConnectTrace } from "@/lib/wa-connect-trace"
 
-const FB_VERSION = "v19.0"
+const FB_VERSION = "v25.0"
+
+function agentDebugLog(entry: Record<string, unknown>): void {
+  void waConnectTrace(entry).catch(() => {})
+}
 
 type SessionPayload = {
   wabaId: string
@@ -44,20 +49,46 @@ function parseEmbeddedSignupMessage(raw: unknown): SessionPayload | null {
   return { wabaId, phoneNumberId }
 }
 
+function isNgrokFreeTunnelHost(): boolean {
+  if (typeof window === "undefined") return false
+  return window.location.hostname.includes("ngrok-free.app")
+}
+
 function initFacebookSdk(appId: string): void {
-  window.FB?.init({
+  if (!window.FB) return
+  // @types/facebook-js-sdk omits `status`; the runtime SDK accepts it (used for ngrok).
+  const params: {
+    appId: string
+    cookie: boolean
+    xfbml: boolean
+    version: string
+    status?: boolean
+  } = {
     appId,
     cookie: true,
     xfbml: true,
     version: FB_VERSION,
-  })
+  }
+  if (isNgrokFreeTunnelHost()) {
+    params.status = true
+  }
+  window.FB.init(params as Parameters<typeof window.FB.init>[0])
 }
+
+/**
+ * One in-flight load per appId so React Strict Mode / double effects do not
+ * overwrite fbAsyncInit and strand a promise (stuck "Loading…" forever).
+ */
+const inflightFacebookSdkByAppId = new Map<string, Promise<void>>()
 
 /**
  * Loads connect.facebook.net/sdk.js once and ensures FB.init runs for this appId.
  * Important for ngrok / React Strict Mode: if window.FB already exists we still call init.
  */
 function ensureFacebookSdkReady(appId: string): Promise<void> {
+  const existing = inflightFacebookSdkByAppId.get(appId)
+  if (existing) return existing
+
   const inner = new Promise<void>((resolve, reject) => {
     if (typeof window === "undefined") {
       resolve()
@@ -114,6 +145,7 @@ function ensureFacebookSdkReady(appId: string): Promise<void> {
     js.src = "https://connect.facebook.net/en_US/sdk.js"
     js.async = true
     js.defer = true
+    js.crossOrigin = "anonymous"
     js.onerror = () => {
       if (settled) return
       settled = true
@@ -130,7 +162,7 @@ function ensureFacebookSdkReady(appId: string): Promise<void> {
   })
 
   // Fails stuck "Loading…" if sdk.js never runs (tunnel, ad blocker, network).
-  return new Promise<void>((resolve, reject) => {
+  const outer = new Promise<void>((resolve, reject) => {
     const t = window.setTimeout(() => {
       reject(new Error("Facebook SDK load timeout"))
     }, 25000)
@@ -144,6 +176,12 @@ function ensureFacebookSdkReady(appId: string): Promise<void> {
         reject(e)
       })
   })
+
+  const tracked = outer.finally(() => {
+    inflightFacebookSdkByAppId.delete(appId)
+  })
+  inflightFacebookSdkByAppId.set(appId, tracked)
+  return tracked
 }
 
 export interface WhatsAppConnectButtonProps {
@@ -163,6 +201,7 @@ export function WhatsAppConnectButton({
   metaConfigId: metaConfigIdProp,
 }: WhatsAppConnectButtonProps) {
   const router = useRouter()
+  // Props from server first (reliable on ngrok); then client env from .env.local
   const appId = (
     metaAppIdProp ??
     process.env.NEXT_PUBLIC_META_APP_ID ??
@@ -174,6 +213,37 @@ export function WhatsAppConnectButton({
     ""
   ).trim()
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return
+    const pubApp = process.env.NEXT_PUBLIC_META_APP_ID?.trim()
+    const pubCfg = process.env.NEXT_PUBLIC_META_CONFIG_ID?.trim()
+    if (!pubApp) {
+      console.warn(
+        "[WhatsAppConnect] NEXT_PUBLIC_META_APP_ID is missing in the client bundle. Add it to .env.local and restart the dev server (props from the server may still supply the app id)."
+      )
+    }
+    if (!pubCfg) {
+      console.warn(
+        "[WhatsAppConnect] NEXT_PUBLIC_META_CONFIG_ID is missing in the client bundle. Add it to .env.local and restart the dev server (props from the server may still supply the config id)."
+      )
+    }
+  }, [])
+
+  useEffect(() => {
+    agentDebugLog({
+      hypothesisId: "CLIENT_BOOT",
+      location: "WhatsAppConnectButton.tsx:mount",
+      message: "WhatsAppConnectButton mounted",
+      data: {
+        host: typeof window !== "undefined" ? window.location.hostname : "",
+        hasAppId: Boolean(appId),
+        hasConfigId: Boolean(configId),
+        hadFbOnMount: typeof window !== "undefined" && Boolean(window.FB),
+      },
+      timestamp: Date.now(),
+    })
+  }, [appId, configId])
+
   const [sdkReady, setSdkReady] = useState(false)
   const [sdkLoading, setSdkLoading] = useState(true)
   const [sdkAttempt, setSdkAttempt] = useState(0)
@@ -182,24 +252,47 @@ export function WhatsAppConnectButton({
 
   const sessionRef = useRef<SessionPayload | null>(null)
   const codeRef = useRef<string | null>(null)
-  /** Only the latest SDK load effect may commit loading/ready state (avoids remount / overlap bugs). */
-  const sdkLoadGenRef = useRef(0)
 
   const tryFinishSignup = useCallback(async () => {
     const code = codeRef.current
     const session = sessionRef.current
-    if (!code || !session) return
+    if (!code || !session) {
+      // #region agent log
+      agentDebugLog({
+        hypothesisId: "H5",
+        location: "WhatsAppConnectButton.tsx:tryFinish-early",
+        message: "Skipped finish (missing code or session)",
+        data: { hasCode: Boolean(code), hasSession: Boolean(session) },
+        timestamp: Date.now(),
+      })
+      // #endregion
+      return
+    }
 
     codeRef.current = null
     sessionRef.current = null
 
     setLoading(true)
     setError(null)
+    const t0 = Date.now()
+    // #region agent log
+    agentDebugLog({
+      hypothesisId: "H3",
+      location: "WhatsAppConnectButton.tsx:connect-fetch-start",
+      message: "POST /api/whatsapp/connect starting",
+      data: {},
+      timestamp: t0,
+    })
+    // #endregion
+    const connectTimeoutMs = 35_000
+    const ac = new AbortController()
+    const abortTimer = window.setTimeout(() => ac.abort(), connectTimeoutMs)
     try {
       const res = await fetch("/api/whatsapp/connect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+        signal: ac.signal,
         body: JSON.stringify({
           code,
           waba_id: session.wabaId,
@@ -207,6 +300,16 @@ export function WhatsAppConnectButton({
           is_coexistence: true,
         }),
       })
+      const elapsed = Date.now() - t0
+      // #region agent log
+      agentDebugLog({
+        hypothesisId: "H3",
+        location: "WhatsAppConnectButton.tsx:connect-fetch-done",
+        message: "POST /api/whatsapp/connect finished",
+        data: { status: res.status, elapsedMs: elapsed },
+        timestamp: Date.now(),
+      })
+      // #endregion
       const data = (await res.json().catch(() => ({}))) as {
         error?: string
         ok?: boolean
@@ -216,15 +319,43 @@ export function WhatsAppConnectButton({
         return
       }
       router.refresh()
-    } catch {
-      setError("Network error")
+    } catch (caught) {
+      const aborted =
+        caught instanceof Error && caught.name === "AbortError"
+      // #region agent log
+      agentDebugLog({
+        hypothesisId: "H3",
+        location: "WhatsAppConnectButton.tsx:connect-fetch-error",
+        message: "POST /api/whatsapp/connect threw",
+        data: {
+          elapsedMs: Date.now() - t0,
+          aborted,
+        },
+        timestamp: Date.now(),
+      })
+      // #endregion
+      setError(
+        aborted
+          ? "Connect timed out. Check your network and ngrok, then try again."
+          : "Network error"
+      )
     } finally {
+      window.clearTimeout(abortTimer)
       setLoading(false)
     }
   }, [router])
 
   useEffect(() => {
     if (!appId) {
+      // #region agent log
+      agentDebugLog({
+        hypothesisId: "H0",
+        location: "WhatsAppConnectButton.tsx:no-app-id",
+        message: "SDK effect skipped — missing Meta App ID",
+        data: {},
+        timestamp: Date.now(),
+      })
+      // #endregion
       setSdkLoading(false)
       setError(
         "Missing Meta App ID. Set NEXT_PUBLIC_META_APP_ID or META_APP_ID in .env.local and restart the dev server."
@@ -237,18 +368,29 @@ export function WhatsAppConnectButton({
       return
     }
 
-    const myGen = ++sdkLoadGenRef.current
+    let cancelled = false
 
     // FB already on the page (remount after router.refresh, etc.): do not flip back to Loading…
     if (typeof window !== "undefined" && window.FB) {
       try {
         initFacebookSdk(appId)
-        if (sdkLoadGenRef.current === myGen) {
+        // #region agent log
+        agentDebugLog({
+          hypothesisId: "H2-fast",
+          location: "WhatsAppConnectButton.tsx:sdk-fastpath",
+          message: "FB already present; init only",
+          data: {},
+          timestamp: Date.now(),
+        })
+        // #endregion
+        if (!cancelled) {
           setSdkReady(true)
           setSdkLoading(false)
           setError(null)
         }
-        return
+        return () => {
+          cancelled = true
+        }
       } catch {
         /* fall through to async loader */
       }
@@ -256,24 +398,62 @@ export function WhatsAppConnectButton({
 
     setSdkLoading(true)
     setSdkReady(false)
+    // #region agent log
+    agentDebugLog({
+      hypothesisId: "H1-H2",
+      location: "WhatsAppConnectButton.tsx:sdk-effect",
+      message: "SDK load started",
+      data: {
+        host: typeof window !== "undefined" ? window.location.hostname : "",
+        hasAppId: Boolean(appId),
+        hasConfigId: Boolean(configId),
+        ngrokFree: isNgrokFreeTunnelHost(),
+      },
+      timestamp: Date.now(),
+    })
+    // #endregion
     ensureFacebookSdkReady(appId)
       .then(() => {
-        if (sdkLoadGenRef.current === myGen) {
+        // #region agent log
+        agentDebugLog({
+          hypothesisId: "H2",
+          location: "WhatsAppConnectButton.tsx:sdk-ready",
+          message: "Facebook SDK ready",
+          data: {},
+          timestamp: Date.now(),
+        })
+        // #endregion
+        if (!cancelled) {
           setSdkReady(true)
           setError(null)
         }
       })
-      .catch(() => {
-        if (sdkLoadGenRef.current === myGen) {
+      .catch((err) => {
+        // #region agent log
+        agentDebugLog({
+          hypothesisId: "H1",
+          location: "WhatsAppConnectButton.tsx:sdk-fail",
+          message: "Facebook SDK load failed",
+          data: {
+            errMsg:
+              err instanceof Error ? err.message : String(err ?? "unknown"),
+          },
+          timestamp: Date.now(),
+        })
+        // #endregion
+        if (!cancelled) {
           setError(
             "Could not load Facebook SDK. Check ad blockers, network, and Meta app settings (add your site domain, e.g. ngrok host, under App domains)."
           )
         }
       })
       .finally(() => {
-        if (sdkLoadGenRef.current === myGen) setSdkLoading(false)
+        if (!cancelled) setSdkLoading(false)
       })
-    return () => {}
+
+    return () => {
+      cancelled = true
+    }
     // Single dependency avoids React dev warning when deps array length changed after HMR
     // (e.g. [appId] vs [appId, sdkAttempt]).
   }, [`${appId}:${sdkAttempt}`])
@@ -311,6 +491,17 @@ export function WhatsAppConnectButton({
     sessionRef.current = null
     codeRef.current = null
 
+    // #region agent log
+    agentDebugLog({
+      hypothesisId: "H4",
+      location: "WhatsAppConnectButton.tsx:FB.login",
+      message: "FB.login called",
+      data: {},
+      timestamp: Date.now(),
+    })
+    // #endregion
+
+    // Embedded Signup: use config_id (not scope) to avoid "advanced permissions" errors
     window.FB.login(
       (response) => {
         const code = response.authResponse?.code
@@ -327,6 +518,7 @@ export function WhatsAppConnectButton({
         override_default_response_type: true,
         extras: {
           setup: {},
+          // Meta "Use case" / WhatsApp Business App onboarding (coexistence)
           featureType: "whatsapp_business_app_onboarding",
           sessionInfoVersion: "3",
         },

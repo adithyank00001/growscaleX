@@ -1,0 +1,105 @@
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775397582185}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775397585778}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775397586341,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775397586346,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775397588223,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775397586747,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775397588224,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775397588594,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775397589998,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775400601086,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401049903}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401050254}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401050781}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051293}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051449}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051490}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051566}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051699}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051717}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401051992}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401052228}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401052526}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":true},"timestamp":1775401052372,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401052788}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401053034}
+{"hypothesisId":"H2-fast","location":"WhatsAppConnectButton.tsx:sdk-fastpath","message":"FB already present; init only","data":{},"timestamp":1775401052382,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":true},"timestamp":1775401053092,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2-fast","location":"WhatsAppConnectButton.tsx:sdk-fastpath","message":"FB already present; init only","data":{},"timestamp":1775401053093,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401156098}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401156594}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775401159691,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775401159692,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775401159782,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775401164099,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775401164100,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775401165219,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401187705}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775401188441,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775401188442,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775401188466,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775401188466,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775401188603,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775401188603,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775401190852,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401357630}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401357678}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401357854}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401358371}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401358453}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401358579}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401358732}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401358880}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401359054}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401360390}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401361106}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401361617}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":true},"timestamp":1775401361990,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":true},"timestamp":1775401362274,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775401363424}
+{"hypothesisId":"H2-fast","location":"WhatsAppConnectButton.tsx:sdk-fastpath","message":"FB already present; init only","data":{},"timestamp":1775401361999,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":true},"timestamp":1775401363241,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2-fast","location":"WhatsAppConnectButton.tsx:sdk-fastpath","message":"FB already present; init only","data":{},"timestamp":1775401362285,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2-fast","location":"WhatsAppConnectButton.tsx:sdk-fastpath","message":"FB already present; init only","data":{},"timestamp":1775401363249,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775401364838,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775401364840,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775401364888,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775401365905,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775402321035}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775402322448,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775402322450,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775402322491,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775407109940}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775407111724,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775407111727,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775407111902,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775407192353}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775407193047,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775407193048,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775407193182,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775407195150,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775407322830}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775407325712,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775407325714,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775407325748,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775407338330}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775407338993,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775407338993,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775407339002,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775407339002,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775407339077,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775407339077,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775407458596,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775407459254,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775457888307}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775457892122,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775457892130,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775457892431,"sessionId":"cfb0f4"}
+{"sessionId":"cfb0f4","hypothesisId":"PAGE","location":"dashboard/page.tsx","message":"Dashboard loaded (WhatsApp connect UI here)","data":{},"timestamp":1775457915954}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775457917165,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775457917165,"sessionId":"cfb0f4"}
+{"hypothesisId":"CLIENT_BOOT","location":"WhatsAppConnectButton.tsx:mount","message":"WhatsAppConnectButton mounted","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"hadFbOnMount":false},"timestamp":1775457917196,"sessionId":"cfb0f4"}
+{"hypothesisId":"H1-H2","location":"WhatsAppConnectButton.tsx:sdk-effect","message":"SDK load started","data":{"host":"localhost","hasAppId":true,"hasConfigId":true,"ngrokFree":false},"timestamp":1775457917196,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775457917388,"sessionId":"cfb0f4"}
+{"hypothesisId":"H2","location":"WhatsAppConnectButton.tsx:sdk-ready","message":"Facebook SDK ready","data":{},"timestamp":1775457917388,"sessionId":"cfb0f4"}
+{"hypothesisId":"H4","location":"WhatsAppConnectButton.tsx:FB.login","message":"FB.login called","data":{},"timestamp":1775457955052,"sessionId":"cfb0f4"}

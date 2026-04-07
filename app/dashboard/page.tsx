@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { appendDebugSessionLog } from "@/lib/debug-session-log"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import { WhatsAppConnectButton } from "@/components/WhatsAppConnectButton"
 import LeadsDataTable from "./leads-data-table"
@@ -15,6 +16,17 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser()
 
   if (!user) redirect("/login")
+
+  // #region agent log
+  void appendDebugSessionLog({
+    sessionId: "cfb0f4",
+    hypothesisId: "PAGE",
+    location: "dashboard/page.tsx",
+    message: "Dashboard loaded (WhatsApp connect UI here)",
+    data: {},
+    timestamp: Date.now(),
+  })
+  // #endregion
 
   const { data: leads, error } = await supabase
     .from("leads")

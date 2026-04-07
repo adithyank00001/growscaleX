@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server"
 import axios from "axios"
 import { z } from "zod"
+import { appendDebugSessionLog } from "@/lib/debug-session-log"
 import { createServerSupabaseClient } from "@/lib/supabase/server"
 import type { WhatsappAccountInsert } from "@/lib/supabase/types"
 
-const GRAPH_API_VERSION = "v19.0"
+const GRAPH_API_VERSION = "v25.0"
 const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_API_VERSION}`
+/** Stops the connect flow from hanging forever if Meta Graph is slow or unreachable. */
+const GRAPH_REQUEST_TIMEOUT_MS = 25_000
 
 const bodySchema = z.object({
   code: z.string().min(1),
@@ -24,6 +27,7 @@ async function fetchFirstPhoneNumberId(
       `${GRAPH_BASE}/${wabaId}/phone_numbers`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
+        timeout: GRAPH_REQUEST_TIMEOUT_MS,
       }
     )
     const first = res.data?.data?.[0]
@@ -41,6 +45,18 @@ async function fetchFirstPhoneNumberId(
 }
 
 export async function POST(request: Request) {
+  const routeT0 = Date.now()
+  // #region agent log
+  void appendDebugSessionLog({
+    sessionId: "cfb0f4",
+    hypothesisId: "H3",
+    location: "connect/route.ts:POST-entry",
+    message: "connect POST handler entered",
+    data: {},
+    timestamp: routeT0,
+  }).catch(() => {})
+  // #endregion
+
   let json: unknown
   try {
     json = await request.json()
@@ -66,6 +82,16 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser()
 
   if (!user) {
+    // #region agent log
+    void appendDebugSessionLog({
+      sessionId: "cfb0f4",
+      hypothesisId: "H4",
+      location: "connect/route.ts:unauthorized",
+      message: "No Supabase user on connect POST",
+      data: { elapsedMs: Date.now() - routeT0 },
+      timestamp: Date.now(),
+    }).catch(() => {})
+    // #endregion
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -80,6 +106,16 @@ export async function POST(request: Request) {
 
   let accessToken: string
   try {
+    // #region agent log
+    void appendDebugSessionLog({
+      sessionId: "cfb0f4",
+      hypothesisId: "H3",
+      location: "connect/route.ts:before-token-exchange",
+      message: "Calling Graph oauth/access_token",
+      data: { elapsedMs: Date.now() - routeT0 },
+      timestamp: Date.now(),
+    }).catch(() => {})
+    // #endregion
     const tokenRes = await axios.get<{
       access_token?: string
       error?: { message?: string }
@@ -88,8 +124,10 @@ export async function POST(request: Request) {
         client_id: clientId,
         client_secret: clientSecret,
         code,
+        // Embedded Signup with config_id: empty redirect_uri per Meta docs
         redirect_uri: "",
       },
+      timeout: GRAPH_REQUEST_TIMEOUT_MS,
     })
 
     const token = tokenRes.data?.access_token
@@ -107,7 +145,31 @@ export async function POST(request: Request) {
     console.log(
       "[whatsapp/connect] OAuth code exchanged (Cloud API + coexistence onboarding use the same token endpoint)"
     )
+    // #region agent log
+    void appendDebugSessionLog({
+      sessionId: "cfb0f4",
+      hypothesisId: "H3",
+      location: "connect/route.ts:token-ok",
+      message: "Graph token exchange succeeded",
+      data: { elapsedMs: Date.now() - routeT0 },
+      timestamp: Date.now(),
+    }).catch(() => {})
+    // #endregion
   } catch (err) {
+    // #region agent log
+    void appendDebugSessionLog({
+      sessionId: "cfb0f4",
+      hypothesisId: "H3",
+      location: "connect/route.ts:token-error",
+      message: "Graph token exchange failed or threw",
+      data: {
+        elapsedMs: Date.now() - routeT0,
+        axiosStatus: axios.isAxiosError(err) ? err.response?.status : null,
+        axiosCode: axios.isAxiosError(err) ? err.code : null,
+      },
+      timestamp: Date.now(),
+    }).catch(() => {})
+    // #endregion
     if (axios.isAxiosError(err)) {
       console.error(
         "[whatsapp/connect] Graph token error:",
@@ -117,8 +179,16 @@ export async function POST(request: Request) {
     } else {
       console.error("[whatsapp/connect] Token exchange error:", err)
     }
+    const timedOut =
+      axios.isAxiosError(err) &&
+      (err.code === "ECONNABORTED" ||
+        String(err.message).toLowerCase().includes("timeout"))
     return NextResponse.json(
-      { error: "Could not exchange authorization code" },
+      {
+        error: timedOut
+          ? "Meta did not respond in time. Check your network and try again."
+          : "Could not exchange authorization code",
+      },
       { status: 502 }
     )
   }
@@ -175,8 +245,31 @@ export async function POST(request: Request) {
 
   if (error) {
     console.error("[whatsapp/connect] Supabase upsert error:", error)
+    // #region agent log
+    void appendDebugSessionLog({
+      sessionId: "cfb0f4",
+      hypothesisId: "H3",
+      location: "connect/route.ts:upsert-fail",
+      message: "Supabase upsert failed",
+      data: {
+        code: error.code,
+        elapsedMs: Date.now() - routeT0,
+      },
+      timestamp: Date.now(),
+    }).catch(() => {})
+    // #endregion
     return NextResponse.json({ error: "Could not save account" }, { status: 500 })
   }
 
+  // #region agent log
+  void appendDebugSessionLog({
+    sessionId: "cfb0f4",
+    hypothesisId: "H3",
+    location: "connect/route.ts:success",
+    message: "connect POST completed ok",
+    data: { elapsedMs: Date.now() - routeT0 },
+    timestamp: Date.now(),
+  }).catch(() => {})
+  // #endregion
   return NextResponse.json({ ok: true })
 }
