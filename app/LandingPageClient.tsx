@@ -1,6 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { GoogleOAuthButton } from "@/components/GoogleOAuthButton";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import {
   ArrowRight,
@@ -44,10 +47,16 @@ export default function LandingPageClient() {
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="hidden sm:inline-flex">
+            <Link
+              href="/login"
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                "hidden sm:inline-flex"
+              )}
+            >
               Log in
-            </Button>
-            <Button>Start Free Trial</Button>
+            </Link>
+            <GoogleOAuthButton>Start Free Trial</GoogleOAuthButton>
           </div>
         </div>
       </nav>
@@ -98,10 +107,13 @@ export default function LandingPageClient() {
                   your counselors only the ones ready to fly.
                 </p>
                 <div className="flex flex-col gap-4 sm:flex-row">
-                  <Button size="lg" className="h-14 gap-2 px-8 text-base">
+                  <GoogleOAuthButton
+                    size="lg"
+                    className="h-14 gap-2 px-8 text-base"
+                  >
                     Stop Losing Leads to Competitors{" "}
                     <ArrowRight className="h-5 w-5" />
-                  </Button>
+                  </GoogleOAuthButton>
                 </div>
               </motion.div>
 
@@ -516,12 +528,12 @@ export default function LandingPageClient() {
               pipeline and reclaim their counselors&apos; time.
             </p>
             <div className="flex flex-col items-center gap-4">
-              <Button
+              <GoogleOAuthButton
                 size="lg"
                 className="h-16 w-full px-10 text-lg shadow-xl shadow-slate-900/10 sm:w-auto"
               >
                 Start Your Risk-Free Trial
-              </Button>
+              </GoogleOAuthButton>
               <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" /> No complex
                 setup. Built specifically for Study Abroad Agencies.
