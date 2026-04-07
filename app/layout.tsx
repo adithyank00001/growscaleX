@@ -4,6 +4,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "GrowScaleX — WhatsApp Lead Qualification",
   description: "Real-time WhatsApp lead qualification dashboard",
+  icons: {
+    icon: "/Gemini_Generated_Image_hj9uarhj9uarhj9u%20-%20Edited.png",
+    shortcut: "/Gemini_Generated_Image_hj9uarhj9uarhj9u%20-%20Edited.png",
+    apple: "/Gemini_Generated_Image_hj9uarhj9uarhj9u%20-%20Edited.png",
+  },
 };
 
 export default function RootLayout({
