@@ -1,6 +1,6 @@
 {
-  "name": "Skip Trace App Waitlist",
-  "description": "A modern professional landing page for a mobile skip tracing application, featuring a waitlist email capture form.",
+  "name": "GrowscaleX",
+  "description": "High-conversion cosmetic dental marketing website",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

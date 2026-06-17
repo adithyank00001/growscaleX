@@ -1,243 +1,504 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import { motion } from 'motion/react';
-import { CheckCircle2, ArrowRight, Smartphone, MapPin, Search } from 'lucide-react';
-import logo from '../Untitled design (18).png';
+import React, { useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  ArrowRight,
+  Target,
+  CalendarCheck,
+  Users,
+  ShieldCheck,
+  CheckCircle2,
+  ChevronDown,
+  PhoneCall,
+  TrendingUp,
+  HeartHandshake,
+  Sparkles,
+} from "lucide-react";
 
-export default function LandingPage() {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      // Mock API call for waitlist
-      setIsSubmitted(true);
-    }
-  };
-
+// --- Logo Component ---
+function Logo({ className = "h-10 w-auto" }: { className?: string }) {
   return (
-    <div className="relative min-h-screen overflow-hidden flex flex-col justify-center">
-      {/* Abstract Background Design */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        
-        {/* Glowing orbs for depth */}
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-[80px]"></div>
-        <div className="absolute top-[20%] -left-32 w-[400px] h-[400px] rounded-full bg-blue-400/5 blur-[80px]"></div>
-      </div>
+    <img 
+      src="/logo.png" 
+      alt="GrowscaleX Logo" 
+      className={`object-contain ${className}`}
+    />
+  );
+}
 
-      {/* Navigation (Minimal) */}
-      <nav className="absolute top-0 left-0 right-0 z-50 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center rounded-2xl bg-white/60 ring-1 ring-blue-600/20 px-3 py-2">
-            <Image
-              src={logo}
-              alt="PropTrace logo"
-              width={160}
-              height={36}
-              className="h-6 w-auto sm:h-7"
-              priority
-            />
-          </div>
+// --- Navigation ---
+function Navbar() {
+  return (
+    <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
+      <div className="container mx-auto px-6 max-w-6xl h-20 flex items-center justify-between">
+        <Link href="/">
+          <Logo />
+        </Link>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          <Link
+            href="#how-it-works"
+            className="text-gray-600 hover:text-primary transition-colors"
+          >
+            How It Works
+          </Link>
+          <Link
+            href="#benefits"
+            className="text-gray-600 hover:text-primary transition-colors"
+          >
+            Benefits
+          </Link>
+          <Link
+            href="#faq"
+            className="text-gray-600 hover:text-primary transition-colors"
+          >
+            FAQ
+          </Link>
         </div>
-      </nav>
+        <Link 
+          href="/book"
+          className="bg-primary text-white px-6 py-2.5 rounded-full font-medium text-sm hover:bg-primary-hover transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+        >
+          Book A Call <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    </nav>
+  );
+}
 
-      {/* Main Hero Section */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20 w-full flex flex-col lg:flex-row items-center gap-16">
-        
-        {/* Left Column: Copy & Form */}
-        <div className="flex-1 text-center lg:text-left max-w-2xl lg:max-w-none mx-auto">
+// --- Hero Section ---
+function Hero() {
+  return (
+    <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 overflow-hidden relative min-h-[90vh] flex items-center">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] bg-gradient-to-b from-[#2F6FE5]/10 via-[#2F6FE5]/5 to-transparent rounded-full blur-[120px] -z-10" />
 
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-poppins text-4xl sm:text-5xl lg:text-[3.6rem] font-medium tracking-tight text-black leading-[1.1] mb-6 max-w-[640px] mx-auto lg:mx-0"
-          >
-            Skip Trace Instantly <br className="hidden lg:block"/>
-            From Your Phone. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400">
-              No Complicated Software Needed.
+      <div className="container mx-auto max-w-4xl relative z-10 flex flex-col items-center gap-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex-1 text-center pt-10 lg:pt-0"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 backdrop-blur-sm text-primary font-medium text-sm mb-8 border border-blue-100/50">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-gray-700">
+              Pay-Per-Show Cosmetic Dental Marketing
             </span>
-          </motion.h1>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-[4rem] font-medium text-dark leading-[1.1] mb-8 tracking-tight">
+            Fill Your Calendar With <br className="hidden lg:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400 font-semibold">
+              Cosmetic Patients.
+            </span>
+            <br />
+            Only Pay When They Show Up.
+          </h1>
+          <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
+            Stop gambling on retainers and marketing promises. Get qualified
+            cosmetic patients booking appointments with your practice and only
+            pay when they attend.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link 
+              href="/book"
+              className="w-full sm:w-auto bg-primary text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-primary-hover transition-all hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2 group"
+            >
+              Book A Strategy Call 
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-gray-500 font-medium">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-primary" /> Zero long-term
+              contracts.
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-primary" /> No expensive
+              retainers.
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg sm:text-xl text-slate-600 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
+// --- Problem Section ---
+function Problem() {
+  return (
+    <section className="py-24 bg-gray-50 px-6">
+      <div className="container mx-auto max-w-5xl">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            No complex dashboards. Just open the app, type in the address, and get verified property owner data with 
-            <strong className="text-slate-900 font-semibold">75% to 95% accuracy</strong> before you even leave the driveway.
-          </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="w-full max-w-none mx-auto lg:mx-0 lg:max-w-xl"
-          >
-            {isSubmitted ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center shadow-sm"
-              >
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-blue-600">
-                  <CheckCircle2 size={24} />
-                </div>
-                <h3 className="text-lg font-bold font-poppins text-slate-900 mb-1">You&apos;re on the list!</h3>
-                <p className="text-slate-600 text-sm">Keep an eye on your inbox. We&apos;ll notify you the moment the app is ready for download.</p>
-              </motion.div>
-            ) : (
-              <div className="w-full">
-                <button
-                  type="button"
-                  disabled
-                  aria-disabled="true"
-                  className="w-full h-14 px-8 rounded-xl bg-blue-600/60 text-white font-semibold shadow-[0_8px_16px_-6px_rgba(37,99,235,0.25)] whitespace-nowrap flex items-center justify-center gap-2 cursor-not-allowed"
-                >
-                  Launching Soon
-                  <ArrowRight size={18} />
-                </button>
-              </div>
-            )}
-            
-            {!isSubmitted && (
-              <p className="text-xs text-slate-500 mt-4 text-center lg:text-left flex items-center justify-center lg:justify-start gap-1.5">
-                <CheckCircle2 size={14} className="text-blue-500" />
-                No desktop required. No spam. We&apos;ll only email you when the app is live.
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-dark leading-tight tracking-tight">
+              Tired Of Paying For Marketing Without Knowing If It Will Work?
+            </h2>
+            <div className="space-y-6 text-lg text-gray-600">
+              <p>
+                Most dental practices don&apos;t struggle because they&apos;re
+                bad at dentistry. They struggle because patient flow is
+                unpredictable.
               </p>
-            )}
+              <p>
+                One month your consultation calendar is full. The next month
+                you&apos;re wondering where the next cosmetic case is coming
+                from.
+              </p>
+              <div className="bg-red-50 p-6 rounded-2xl border border-red-100 text-red-900 font-medium">
+                Meanwhile, agencies keep charging the same monthly fee whether
+                you get results or not.
+              </div>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="bg-white p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 relative"
+          >
+            <div className="absolute -top-6 -left-6 w-12 h-12 bg-primary text-white flex items-center justify-center rounded-xl shadow-lg rotate-[-10deg]">
+              <Target className="w-6 h-6" />
+            </div>
+            <h3 className="text-2xl font-bold mb-6 mt-4">
+              That&apos;s why we&apos;ve built a simpler model.
+            </h3>
+            <ul className="space-y-5">
+              {[
+                { text: "You don't pay for ad management.", active: false },
+                { text: "You don't pay for reports.", active: false },
+                { text: "You don't pay for promises.", active: false },
+                {
+                  text: "You only pay when patients actually show up for their appointment.",
+                  active: true,
+                },
+              ].map((item, i) => (
+                <li
+                  key={i}
+                  className={`flex items-start gap-4 ${item.active ? "text-primary font-bold text-lg" : "text-gray-500 line-through decoration-gray-300"}`}
+                >
+                  {item.active ? (
+                    <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
+                  ) : (
+                    <div className="w-6 h-6 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+                    </div>
+                  )}
+                  <span>{item.text}</span>
+                </li>
+              ))}
+            </ul>
           </motion.div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* Mobile-only mock to keep hero phone visible */}
+// --- Benefits Section ---
+function Benefits() {
+  const benefits = [
+    {
+      title: "More Cosmetic Patients",
+      desc: "Get in front of people actively looking for cosmetic dental treatments in your area.",
+      icon: Users,
+    },
+    {
+      title: "Lower Risk",
+      desc: "No expensive retainers or long-term commitments before seeing results.",
+      icon: ShieldCheck,
+    },
+    {
+      title: "A Fuller Calendar",
+      desc: "Keep your consultation schedule filled with more opportunities to convert patients into treatment plans.",
+      icon: CalendarCheck,
+    },
+    {
+      title: "Focus On Patient Care",
+      desc: "Spend less time worrying about marketing and more time serving patients.",
+      icon: HeartHandshake,
+    },
+  ];
+
+  return (
+    <section id="benefits" className="py-24 px-6 bg-white shrink-0">
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-dark tracking-tight mb-4">
+            What This Means For Your Practice
+          </h2>
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+            Experience the freedom of a performance-based partnership.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {benefits.map((benefit, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:border-primary/30 transition-colors group"
+            >
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <benefit.icon className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-dark mb-3">
+                {benefit.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">{benefit.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// --- How It Works Section ---
+function HowItWorks() {
+  const steps = [
+    {
+      title: "Book A Quick Call",
+      desc: "We'll learn about your practice and determine whether this model is a good fit.",
+    },
+    {
+      title: "We Launch Your Campaign",
+      desc: "Everything is set up to attract cosmetic patients interested in treatment.",
+    },
+    {
+      title: "Patients Book Appointments",
+      desc: "Qualified prospects schedule consultations with your practice.",
+    },
+    {
+      title: "They Show Up. You Pay.",
+      desc: "No retainers. No paying for activity. No paying for marketing promises. You only pay when patients attend their appointment.",
+    },
+  ];
+
+  return (
+    <section
+      id="how-it-works"
+      className="py-24 px-6 bg-dark text-white overflow-hidden relative"
+    >
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="container mx-auto max-w-5xl relative z-10">
+        <div className="text-center mb-20">
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
+            Getting Started Is Simple
+          </h2>
+        </div>
+        <div className="relative">
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2" />
+          <div className="space-y-12 md:space-y-0">
+            {steps.map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className={`flex flex-col md:flex-row items-center gap-8 md:gap-16 ${i % 2 === 0 ? "md:flex-row-reverse" : ""} relative`}
+              >
+                <div className="flex-1 w-full text-center md:text-left shadow-2xl p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm relative z-10 hidden md:block opacity-0" />
+
+                <div className="w-16 h-16 shrink-0 bg-primary rounded-full flex items-center justify-center font-bold text-2xl z-10 shadow-lg shadow-primary/50 border-4 border-dark relative">
+                  {i + 1}
+                  {i !== steps.length - 1 && (
+                    <div className="md:hidden absolute top-full left-1/2 w-0.5 h-12 bg-white/10 -translate-x-1/2" />
+                  )}
+                </div>
+
+                <div
+                  className={`flex-1 w-full md:w-1/2 text-center ${i % 2 === 0 ? "md:text-right" : "md:text-left"} p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm relative z-10 hover:bg-white/10 transition-colors`}
+                >
+                  <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
+                  <p className="text-gray-400 text-lg">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// --- FAQ Section ---
+function FAQ() {
+  const faqs = [
+    {
+      q: "How is this different from a traditional marketing agency?",
+      a: "Most agencies charge fixed monthly fees regardless of results. Our model is focused on bringing cosmetic patients into your practice and only getting paid when they show up.",
+    },
+    {
+      q: "Do I need to sign a long-term contract?",
+      a: "No. We believe results should keep clients, not contracts.",
+    },
+    {
+      q: "What kind of patients do you help attract?",
+      a: "People actively looking for cosmetic dental treatments and consultations.",
+    },
+    {
+      q: "What happens if patients don't show up?",
+      a: "Simple: You don't pay. Our incentives are 100% aligned with your success.",
+    },
+    {
+      q: "How quickly can I get started?",
+      a: "Book a quick strategy call and we'll determine whether this model is a fit for your practice. If it is, we can launch quickly.",
+    },
+  ];
+
+  const [open, setOpen] = useState<number | null>(0);
+
+  return (
+    <section id="faq" className="py-24 px-6 bg-white">
+      <div className="container mx-auto max-w-3xl">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-dark tracking-tight mb-4">
+            Frequently Asked Questions
+          </h2>
+        </div>
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+              className="border border-gray-100 rounded-2xl overflow-hidden bg-gray-50"
+            >
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full px-6 py-5 text-left flex items-center justify-between font-semibold text-dark hover:bg-gray-100/50 transition-colors"
+              >
+                <span className="text-lg pr-8">{faq.q}</span>
+                <ChevronDown
+                  className={`w-5 h-5 text-primary shrink-0 transition-transform duration-300 ${open === i ? "rotate-180" : ""}`}
+                />
+              </button>
+              <AnimatePresence>
+                {open === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="px-6 pb-6 text-gray-600">{faq.a}</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// --- CTA Section ---
+function CTA() {
+  return (
+    <section
+      id="book"
+      className="py-24 px-6 bg-gray-50 relative overflow-hidden"
+    >
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="container mx-auto max-w-4xl text-center relative z-10">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="md:hidden w-full flex justify-center"
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-white p-10 md:p-12 rounded-[40px] shadow-2xl shadow-gray-200/50 border border-gray-100"
         >
-          <div className="relative w-[260px] h-[520px] bg-black rounded-[2.5rem] p-2.5 shadow-2xl shadow-blue-900/20 ring-1 ring-slate-900/5">
-            <div className="relative w-full h-full bg-slate-50 rounded-[2rem] overflow-hidden flex flex-col pt-8">
-              <div className="absolute top-0 inset-x-0 h-6 flex justify-center">
-                <div className="w-28 h-5 bg-black rounded-b-2xl"></div>
-              </div>
-              <div className="flex px-5 pt-6 pb-4 items-center justify-between bg-white border-b border-slate-100">
-                <div>
-                  <h3 className="font-poppins font-bold text-lg text-slate-900">Find Owner</h3>
-                  <p className="text-[10px] text-slate-500 font-medium">Anywhere in the US</p>
-                </div>
-                <div className="w-9 h-9 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 shadow-sm border border-blue-100">
-                  <MapPin size={16} />
-                </div>
-              </div>
-              <div className="p-4 space-y-4">
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                  <div className="text-[10px] font-semibold text-slate-400 mb-2 uppercase tracking-wider">Target Property</div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                      <Search size={16} />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-900">1234 Maple Street</div>
-                      <div className="text-xs text-slate-500">Austin, TX 78701</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-blue-600 rounded-2xl p-5 shadow-lg shadow-blue-600/20 text-white relative overflow-hidden">
-                  <div className="absolute top-0 right-0 -mr-3 -mt-3 w-20 h-20 bg-white/20 rounded-full blur-2xl"></div>
-                  <div className="relative z-10 text-xs font-medium text-blue-100 mb-1">Owner Found!</div>
-                  <div className="relative z-10 text-xl font-bold font-poppins mb-3">Jonathan Davis</div>
-                  <div className="relative z-10 bg-white/10 rounded-xl p-3 flex items-center justify-between backdrop-blur-sm border border-white/10">
-                    <div>
-                      <div className="text-[10px] text-blue-200 mb-0.5">Mobile Phone</div>
-                      <div className="font-mono text-sm">(512) 555-0199</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute bottom-5 left-5 right-5">
-                <div className="w-full h-10 bg-black text-white rounded-xl flex items-center justify-center text-xs font-semibold shadow-lg">
-                  Save to Leads
-                </div>
-              </div>
+          <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+            <PhoneCall className="w-8 h-8" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4 tracking-tight">
+            Ready To Fill More Consultation Slots?
+          </h2>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            If you&apos;re looking for a lower-risk way to attract cosmetic
+            dental patients, let&apos;s talk. Book a quick strategy call and see
+            if this model is right for your practice.
+          </p>
+          <Link href="/book" className="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary-hover transition-all hover:scale-105 shadow-xl shadow-primary/30 flex items-center justify-center gap-3 mx-auto w-full sm:w-auto">
+            Book A Strategy Call <ArrowRight className="w-5 h-5" />
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// --- Footer ---
+function Footer() {
+  return (
+    <footer className="bg-dark text-gray-400 py-12 px-6 border-t border-white/10">
+      <div className="container mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="invert grayscale brightness-200 contrast-200">
+          <Logo />
+        </div>
+        <p className="text-sm">
+          &copy; {new Date().getFullYear()} GrowscaleX. All rights reserved.
+        </p>
+        <div className="flex gap-6 text-sm">
+          <Link href="#" className="hover:text-white transition-colors">
+            Privacy Policy
+          </Link>
+          <Link href="#" className="hover:text-white transition-colors">
+            Terms of Service
+          </Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-white">
+      <Navbar />
+      <Hero />
+      <Problem />
+      <Benefits />
+      <HowItWorks />
+      {/* Value Prop Summary */}
+      <section className="py-20 bg-primary text-white px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
+            <div className="pb-8 md:pb-0 md:px-6">
+              <h4 className="text-4xl font-black mb-2">$0</h4>
+              <p className="text-blue-100 font-medium">Upfront Management Fees</p>
+            </div>
+            <div className="py-8 md:py-0 md:px-6">
+              <h4 className="text-4xl font-black mb-2">0</h4>
+              <p className="text-blue-100 font-medium">Long-Term Contracts</p>
+            </div>
+            <div className="py-8 md:py-0 md:px-6">
+              <h4 className="text-4xl font-black mb-2">100%</h4>
+              <p className="text-blue-100 font-medium">Results Focused</p>
+            </div>
+            <div className="pt-8 md:pt-0 md:px-6">
+              <h4 className="text-4xl font-black mb-2">1</h4>
+              <p className="text-blue-100 font-medium">Shared Goal</p>
             </div>
           </div>
-        </motion.div>
-
-        {/* Right Column: Visual App Mockup */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, type: "spring" }}
-          className="flex-1 hidden md:flex justify-center lg:justify-end relative"
-        >
-          {/* Decorative background for the phone */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-100 to-white rounded-full blur-3xl opacity-50 z-0"></div>
-          
-          <div className="relative z-10 w-[300px] h-[600px] bg-black rounded-[3rem] p-2.5 shadow-2xl shadow-blue-900/20 ring-1 ring-slate-900/5 rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
-            {/* Screen Content Wrapper */}
-            <div className="relative w-full h-full bg-slate-50 rounded-[2.5rem] overflow-hidden flex flex-col pt-8">
-              {/* Fake status bar notch */}
-              <div className="absolute top-0 inset-x-0 h-6 flex justify-center">
-                <div className="w-32 h-6 bg-black rounded-b-2xl"></div>
-              </div>
-              
-              {/* Mockup UI */}
-              <div className="flex px-6 pt-6 pb-4 items-center justify-between bg-white border-b border-slate-100">
-                <div>
-                  <h3 className="font-poppins font-bold text-lg text-slate-900">Find Owner</h3>
-                  <p className="text-[10px] text-slate-500 font-medium">Anywhere in the US</p>
-                </div>
-                <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 shadow-sm border border-blue-100">
-                  <MapPin size={18} />
-                </div>
-              </div>
-
-              <div className="p-4">
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-4">
-                  <div className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Target Property</div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
-                      <Search size={16} />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-slate-900">1234 Maple Street</div>
-                      <div className="text-xs text-slate-500">Austin, TX 78701</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-600 rounded-2xl p-5 shadow-lg shadow-blue-600/20 text-white relative overflow-hidden">
-                  <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/20 rounded-full blur-2xl"></div>
-                  <div className="relative z-10 text-xs font-medium text-blue-100 mb-1">Owner Found!</div>
-                  <div className="relative z-10 text-xl font-bold font-poppins mb-4">Jonathan Davis</div>
-                  
-                  <div className="relative z-10 bg-white/10 rounded-xl p-3 flex items-center justify-between backdrop-blur-sm border border-white/10">
-                    <div>
-                      <div className="text-[10px] text-blue-200 mb-0.5">Mobile Phone</div>
-                      <div className="font-mono text-sm">(512) 555-0199</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Bottom floating button */}
-              <div className="absolute bottom-6 left-6 right-6">
-                 <div className="w-full h-12 bg-black text-white rounded-xl flex items-center justify-center text-sm font-semibold shadow-lg">
-                   Save to Leads
-                 </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </main>
-    </div>
+        </div>
+      </section>
+      <FAQ />
+      <CTA />
+      <Footer />
+    </main>
   );
 }
