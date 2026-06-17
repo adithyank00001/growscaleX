@@ -17,6 +17,29 @@ import {
   Sparkles,
 } from "lucide-react";
 
+// --- Custom Icons ---
+function ToothIcon({ className }: { className?: string }) {
+  const maskId = React.useId ? React.useId().replace(/:/g, "") : "tooth-mask";
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 24" fill="currentColor" className={className}>
+      <mask id={maskId}>
+        <rect width="29" height="24" fill="white" />
+        <path d="M10,7 Q12,9 14,7 T 18,7" stroke="black" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      </mask>
+      <path 
+        mask={`url(#${maskId})`}
+        d="M9,2C6,2 4,5 4,8C4,10.11 5,13 6,14C7,15 8,22 10,22C14.54,22 12,15 14,15C16,15 13.46,22 18,22C20,22 21,15 22,14C23,13 24,10.11 24,8C24,5 22,2 19,2C16,2 16,3 14,3C12,3 12,2 9,2Z" 
+      />
+      {/* Sparkle 1 (Top Left) */}
+      <path d="M 4 1 C 4 2.5 5.5 4 7 4 C 5.5 4 4 5.5 4 7 C 4 5.5 2.5 4 1 4 C 2.5 4 4 2.5 4 1 Z" />
+      {/* Sparkle 2 (Bottom Left) */}
+      <path d="M 2 8 C 2 9 3 10 4 10 C 3 10 2 11 2 12 C 2 11 1 10 0 10 C 1 10 2 9 2 8 Z" />
+      {/* Sparkle 3 (Right) */}
+      <path d="M 26 10.5 C 26 11.8 27.2 13 28.5 13 C 27.2 13 26 14.2 26 15.5 C 26 14.2 24.8 13 23.5 13 C 24.8 13 26 11.8 26 10.5 Z" />
+    </svg>
+  );
+}
+
 // --- Logo Component ---
 function Logo({ className = "h-10 w-auto" }: { className?: string }) {
   return (
@@ -32,9 +55,9 @@ function Logo({ className = "h-10 w-auto" }: { className?: string }) {
 function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
-      <div className="container mx-auto px-6 max-w-6xl h-20 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 max-w-6xl h-16 md:h-20 flex items-center justify-between">
         <Link href="/">
-          <Logo />
+          <Logo className="h-8 md:h-10 w-auto" />
         </Link>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <Link
@@ -58,9 +81,9 @@ function Navbar() {
         </div>
         <Link 
           href="/book"
-          className="bg-primary text-white px-6 py-2.5 rounded-full font-medium text-sm hover:bg-primary-hover transition-colors flex items-center gap-2 shadow-lg shadow-primary/20"
+          className="bg-primary text-white px-4 py-2 md:px-6 md:py-2.5 rounded-full font-medium text-xs md:text-sm hover:bg-primary-hover transition-colors flex items-center gap-1.5 md:gap-2 shadow-lg shadow-primary/20 shrink-0"
         >
-          Book A Call <ArrowRight className="w-4 h-4" />
+          Book A Call <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
         </Link>
       </div>
     </nav>
@@ -72,7 +95,62 @@ function Hero() {
   return (
     <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 overflow-hidden relative min-h-[90vh] flex items-center">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] bg-gradient-to-b from-[#2F6FE5]/10 via-[#2F6FE5]/5 to-transparent rounded-full blur-[120px] -z-10" />
+      
+      {/* Decorative Floating Teeth */}
+      {/* 1. Top Left (Mobile & Desktop) */}
+      <motion.div 
+        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-24 left-[-5%] md:top-32 md:left-[10%] text-primary opacity-15 z-0 pointer-events-none"
+      >
+        <ToothIcon className="w-28 h-28 md:w-32 md:h-32" />
+      </motion.div>
 
+      {/* 2. Bottom Right (Mobile & Desktop) */}
+      <motion.div 
+        animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute bottom-20 right-[-10%] md:bottom-32 md:right-[10%] text-blue-400 opacity-15 z-0 pointer-events-none"
+      >
+        <ToothIcon className="w-32 h-32 md:w-48 md:h-48" />
+      </motion.div>
+
+      {/* 3. Middle Right (Desktop Only) */}
+      <motion.div 
+        animate={{ y: [0, -15, 0], rotate: [15, 0, 15] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="absolute top-1/2 left-[85%] text-primary opacity-15 z-0 pointer-events-none hidden md:block"
+      >
+        <ToothIcon className="w-20 h-20" />
+      </motion.div>
+
+      {/* 4. Middle Left (Desktop Only - NEW) */}
+      <motion.div 
+        animate={{ y: [0, 15, 0], rotate: [-10, 0, -10] }}
+        transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+        className="absolute top-[65%] left-[8%] text-blue-300 opacity-15 z-0 pointer-events-none hidden md:block"
+      >
+        <ToothIcon className="w-24 h-24" />
+      </motion.div>
+
+      {/* 5. Middle Right (Mobile Only - NEW) */}
+      <motion.div 
+        animate={{ y: [0, -10, 0], rotate: [-5, 5, -5] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+        className="absolute top-[45%] right-[-5%] text-primary opacity-15 z-0 pointer-events-none md:hidden"
+      >
+        <ToothIcon className="w-20 h-20" />
+      </motion.div>
+
+      {/* 6. Bottom Left (Mobile Only - NEW) */}
+      <motion.div 
+        animate={{ y: [0, 15, 0], rotate: [10, 0, 10] }}
+        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
+        className="absolute bottom-[35%] left-[-10%] text-blue-300 opacity-15 z-0 pointer-events-none md:hidden"
+      >
+        <ToothIcon className="w-24 h-24" />
+      </motion.div>
+      
       <div className="container mx-auto max-w-4xl relative z-10 flex flex-col items-center gap-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
