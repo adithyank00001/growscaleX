@@ -438,14 +438,6 @@ function Footer() {
         <p className="text-sm">
           &copy; {new Date().getFullYear()} GrowscaleX. All rights reserved.
         </p>
-        <div className="flex gap-6 text-sm">
-          <Link href="#" className="hover:text-white transition-colors">
-            Privacy Policy
-          </Link>
-          <Link href="#" className="hover:text-white transition-colors">
-            Terms of Service
-          </Link>
-        </div>
       </div>
     </footer>
   );
