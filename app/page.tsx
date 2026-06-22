@@ -12,33 +12,9 @@ import {
   CheckCircle2,
   ChevronDown,
   PhoneCall,
-  TrendingUp,
   HeartHandshake,
   Sparkles,
 } from "lucide-react";
-
-// --- Custom Icons ---
-function ToothIcon({ className }: { className?: string }) {
-  const maskId = React.useId ? React.useId().replace(/:/g, "") : "tooth-mask";
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 24" fill="currentColor" className={className}>
-      <mask id={maskId}>
-        <rect width="29" height="24" fill="white" />
-        <path d="M10,7 Q12,9 14,7 T 18,7" stroke="black" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      </mask>
-      <path 
-        mask={`url(#${maskId})`}
-        d="M9,2C6,2 4,5 4,8C4,10.11 5,13 6,14C7,15 8,22 10,22C14.54,22 12,15 14,15C16,15 13.46,22 18,22C20,22 21,15 22,14C23,13 24,10.11 24,8C24,5 22,2 19,2C16,2 16,3 14,3C12,3 12,2 9,2Z" 
-      />
-      {/* Sparkle 1 (Top Left) */}
-      <path d="M 4 1 C 4 2.5 5.5 4 7 4 C 5.5 4 4 5.5 4 7 C 4 5.5 2.5 4 1 4 C 2.5 4 4 2.5 4 1 Z" />
-      {/* Sparkle 2 (Bottom Left) */}
-      <path d="M 2 8 C 2 9 3 10 4 10 C 3 10 2 11 2 12 C 2 11 1 10 0 10 C 1 10 2 9 2 8 Z" />
-      {/* Sparkle 3 (Right) */}
-      <path d="M 26 10.5 C 26 11.8 27.2 13 28.5 13 C 27.2 13 26 14.2 26 15.5 C 26 14.2 24.8 13 23.5 13 C 24.8 13 26 11.8 26 10.5 Z" />
-    </svg>
-  );
-}
 
 // --- Logo Component ---
 function Logo({ className = "h-10 w-auto" }: { className?: string }) {
@@ -79,12 +55,12 @@ function Navbar() {
             FAQ
           </Link>
         </div>
-        <Link 
-          href="/book"
+        <a 
+          href="tel:+918891993882"
           className="bg-primary text-white px-4 py-2 md:px-6 md:py-2.5 rounded-full font-medium text-xs md:text-sm hover:bg-primary-hover transition-colors flex items-center gap-1.5 md:gap-2 shadow-lg shadow-primary/20 shrink-0"
         >
           Book A Call <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
-        </Link>
+        </a>
       </div>
     </nav>
   );
@@ -96,61 +72,6 @@ function Hero() {
     <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 overflow-hidden relative min-h-[90vh] flex items-center">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] bg-gradient-to-b from-[#2F6FE5]/10 via-[#2F6FE5]/5 to-transparent rounded-full blur-[120px] -z-10" />
       
-      {/* Decorative Floating Teeth */}
-      {/* 1. Top Left (Mobile & Desktop) */}
-      <motion.div 
-        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-24 left-[-5%] md:top-32 md:left-[10%] text-primary opacity-15 z-0 pointer-events-none"
-      >
-        <ToothIcon className="w-28 h-28 md:w-32 md:h-32" />
-      </motion.div>
-
-      {/* 2. Bottom Right (Mobile & Desktop) */}
-      <motion.div 
-        animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute bottom-20 right-[-10%] md:bottom-32 md:right-[10%] text-blue-400 opacity-15 z-0 pointer-events-none"
-      >
-        <ToothIcon className="w-32 h-32 md:w-48 md:h-48" />
-      </motion.div>
-
-      {/* 3. Middle Right (Desktop Only) */}
-      <motion.div 
-        animate={{ y: [0, -15, 0], rotate: [15, 0, 15] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute top-1/2 left-[85%] text-primary opacity-15 z-0 pointer-events-none hidden md:block"
-      >
-        <ToothIcon className="w-20 h-20" />
-      </motion.div>
-
-      {/* 4. Middle Left (Desktop Only - NEW) */}
-      <motion.div 
-        animate={{ y: [0, 15, 0], rotate: [-10, 0, -10] }}
-        transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-        className="absolute top-[65%] left-[8%] text-blue-300 opacity-15 z-0 pointer-events-none hidden md:block"
-      >
-        <ToothIcon className="w-24 h-24" />
-      </motion.div>
-
-      {/* 5. Middle Right (Mobile Only - NEW) */}
-      <motion.div 
-        animate={{ y: [0, -10, 0], rotate: [-5, 5, -5] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-        className="absolute top-[45%] right-[-5%] text-primary opacity-15 z-0 pointer-events-none md:hidden"
-      >
-        <ToothIcon className="w-20 h-20" />
-      </motion.div>
-
-      {/* 6. Bottom Left (Mobile Only - NEW) */}
-      <motion.div 
-        animate={{ y: [0, 15, 0], rotate: [10, 0, 10] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 2.5 }}
-        className="absolute bottom-[35%] left-[-10%] text-blue-300 opacity-15 z-0 pointer-events-none md:hidden"
-      >
-        <ToothIcon className="w-24 h-24" />
-      </motion.div>
-      
       <div className="container mx-auto max-w-4xl relative z-10 flex flex-col items-center gap-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -161,39 +82,36 @@ function Hero() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50/80 backdrop-blur-sm text-primary font-medium text-sm mb-8 border border-blue-100/50">
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-gray-700">
-              Pay-Per-Show Cosmetic Dental Marketing
+              Contact us for our current offer
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-[4rem] font-medium text-dark leading-[1.1] mb-8 tracking-tight">
             Fill Your Calendar With <br className="hidden lg:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400 font-semibold">
-              Cosmetic Patients.
+              Qualified Appointments.
             </span>
-            <br />
-            Only Pay When They Show Up.
           </h1>
           <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
-            Stop gambling on retainers and marketing promises. Get qualified
-            cosmetic patients booking appointments with your practice and only
-            pay when they attend.
+            We help service-based businesses attract, qualify, and book more appointments with high-intent prospects.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              href="/book"
+            <a 
+              href="tel:+918891993882"
               className="w-full sm:w-auto bg-primary text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-primary-hover transition-all hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center gap-2 group"
             >
               Book A Strategy Call 
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            </a>
           </div>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-gray-500 font-medium">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-primary" /> Zero long-term
-              contracts.
+              <ShieldCheck className="w-5 h-5 text-primary" /> No Long-Term Contracts
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-primary" /> No expensive
-              retainers.
+              <CheckCircle2 className="w-5 h-5 text-primary" /> No Expensive Retainers
+            </div>
+            <div className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-primary" /> Results-Focused Approach
             </div>
           </div>
         </motion.div>
@@ -215,22 +133,20 @@ function Problem() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-dark leading-tight tracking-tight">
-              Tired Of Paying For Marketing Without Knowing If It Will Work?
+              Tired Of An Unpredictable Pipeline?
             </h2>
             <div className="space-y-6 text-lg text-gray-600">
               <p>
-                Most dental practices don&apos;t struggle because they&apos;re
-                bad at dentistry. They struggle because patient flow is
-                unpredictable.
+                Most businesses don&apos;t struggle because they offer a bad service. They struggle because new opportunities aren&apos;t coming in consistently.
               </p>
               <p>
-                One month your consultation calendar is full. The next month
-                you&apos;re wondering where the next cosmetic case is coming
-                from.
+                One month you&apos;re fully booked. The next month you&apos;re wondering where your next customer is coming from.
               </p>
-              <div className="bg-red-50 p-6 rounded-2xl border border-red-100 text-red-900 font-medium">
-                Meanwhile, agencies keep charging the same monthly fee whether
-                you get results or not.
+              <p>
+                Referrals are great. Word-of-mouth is powerful. But neither creates predictable growth.
+              </p>
+              <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 text-blue-900 font-medium">
+                If you want consistent revenue, you need a consistent flow of qualified appointments. That&apos;s where we come in.
               </div>
             </div>
           </motion.div>
@@ -245,30 +161,24 @@ function Problem() {
               <Target className="w-6 h-6" />
             </div>
             <h3 className="text-2xl font-bold mb-6 mt-4">
-              That&apos;s why we&apos;ve built a simpler model.
+              Why Businesses Choose GrowscaleX
             </h3>
             <ul className="space-y-5">
               {[
-                { text: "You don't pay for ad management.", active: false },
-                { text: "You don't pay for reports.", active: false },
-                { text: "You don't pay for promises.", active: false },
-                {
-                  text: "You only pay when patients actually show up for their appointment.",
-                  active: true,
-                },
+                { title: "Less Guesswork", text: "No more wondering where your next customer will come from.", active: true },
+                { title: "Consistent Opportunities", text: "Create a steady flow of qualified appointments throughout the year.", active: true },
+                { title: "Growth-Focused Strategy", text: "Every effort is focused on generating opportunities that can drive revenue.", active: true },
+                { title: "A Long-Term Growth Partner", text: "We're focused on helping your business grow, not selling unnecessary services.", active: true },
               ].map((item, i) => (
                 <li
                   key={i}
-                  className={`flex items-start gap-4 ${item.active ? "text-primary font-bold text-lg" : "text-gray-500 line-through decoration-gray-300"}`}
+                  className="flex items-start gap-4 text-gray-700"
                 >
-                  {item.active ? (
-                    <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
-                  ) : (
-                    <div className="w-6 h-6 flex items-center justify-center shrink-0 mt-0.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                    </div>
-                  )}
-                  <span>{item.text}</span>
+                  <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5 text-primary" />
+                  <div>
+                    <span className="block font-bold text-dark">{item.title}</span>
+                    <span className="text-sm text-gray-500">{item.text}</span>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -283,23 +193,23 @@ function Problem() {
 function Benefits() {
   const benefits = [
     {
-      title: "More Cosmetic Patients",
-      desc: "Get in front of people actively looking for cosmetic dental treatments in your area.",
+      title: "More Qualified Appointments",
+      desc: "Connect with people actively searching for the services you offer.",
       icon: Users,
     },
     {
-      title: "Lower Risk",
-      desc: "No expensive retainers or long-term commitments before seeing results.",
+      title: "More Revenue Opportunities",
+      desc: "More conversations with qualified prospects means more opportunities to close business.",
       icon: ShieldCheck,
     },
     {
-      title: "A Fuller Calendar",
-      desc: "Keep your consultation schedule filled with more opportunities to convert patients into treatment plans.",
+      title: "A Predictable Pipeline",
+      desc: "Build a reliable flow of appointments instead of relying solely on referrals.",
       icon: CalendarCheck,
     },
     {
-      title: "Focus On Patient Care",
-      desc: "Spend less time worrying about marketing and more time serving patients.",
+      title: "Focus On What You Do Best",
+      desc: "Spend less time chasing leads and more time serving customers.",
       icon: HeartHandshake,
     },
   ];
@@ -309,10 +219,10 @@ function Benefits() {
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-dark tracking-tight mb-4">
-            What This Means For Your Practice
+            What This Means For Your Business
           </h2>
           <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            Experience the freedom of a performance-based partnership.
+            Experience the freedom of a predictable, consistent pipeline.
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -344,20 +254,20 @@ function Benefits() {
 function HowItWorks() {
   const steps = [
     {
-      title: "Book A Quick Call",
-      desc: "We'll learn about your practice and determine whether this model is a good fit.",
+      title: "Book A Strategy Call",
+      desc: "We'll learn about your business, goals, and current challenges.",
     },
     {
-      title: "We Launch Your Campaign",
-      desc: "Everything is set up to attract cosmetic patients interested in treatment.",
+      title: "Build Your Growth Plan",
+      desc: "We'll identify the best approach for attracting qualified prospects in your market.",
     },
     {
-      title: "Patients Book Appointments",
-      desc: "Qualified prospects schedule consultations with your practice.",
+      title: "Start Booking More Appointments",
+      desc: "Qualified prospects begin entering your pipeline and booking appointments.",
     },
     {
-      title: "They Show Up. You Pay.",
-      desc: "No retainers. No paying for activity. No paying for marketing promises. You only pay when patients attend their appointment.",
+      title: "Focus On Closing Deals",
+      desc: "Spend your time doing what matters most—turning opportunities into customers.",
     },
   ];
 
@@ -413,24 +323,24 @@ function HowItWorks() {
 function FAQ() {
   const faqs = [
     {
-      q: "How is this different from a traditional marketing agency?",
-      a: "Most agencies charge fixed monthly fees regardless of results. Our model is focused on bringing cosmetic patients into your practice and only getting paid when they show up.",
+      q: "What types of businesses do you work with?",
+      a: "We primarily work with service-based businesses looking to generate more qualified appointments and growth opportunities.",
     },
     {
-      q: "Do I need to sign a long-term contract?",
-      a: "No. We believe results should keep clients, not contracts.",
-    },
-    {
-      q: "What kind of patients do you help attract?",
-      a: "People actively looking for cosmetic dental treatments and consultations.",
-    },
-    {
-      q: "What happens if patients don't show up?",
-      a: "Simple: You don't pay. Our incentives are 100% aligned with your success.",
+      q: "How do I know if this is a good fit for my business?",
+      a: "Book a strategy call and we'll discuss your goals, market, and current situation.",
     },
     {
       q: "How quickly can I get started?",
-      a: "Book a quick strategy call and we'll determine whether this model is a fit for your practice. If it is, we can launch quickly.",
+      a: "Most businesses can get started shortly after the initial strategy call.",
+    },
+    {
+      q: "Do I need to sign a long-term contract?",
+      a: "No. We believe relationships should be built on results and trust.",
+    },
+    {
+      q: "What makes GrowscaleX different?",
+      a: "We focus on one thing: helping businesses generate more qualified appointments and revenue opportunities.",
     },
   ];
 
@@ -503,16 +413,14 @@ function CTA() {
             <PhoneCall className="w-8 h-8" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4 tracking-tight">
-            Ready To Fill More Consultation Slots?
+            Ready To Generate More Qualified Appointments?
           </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            If you&apos;re looking for a lower-risk way to attract cosmetic
-            dental patients, let&apos;s talk. Book a quick strategy call and see
-            if this model is right for your practice.
+            If you&apos;re looking for a predictable way to attract more opportunities and grow your business, let&apos;s talk. Book a strategy call and see what&apos;s possible for your business.
           </p>
-          <Link href="/book" className="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary-hover transition-all hover:scale-105 shadow-xl shadow-primary/30 flex items-center justify-center gap-3 mx-auto w-full sm:w-auto">
+          <a href="tel:+918891993882" className="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary-hover transition-all hover:scale-105 shadow-xl shadow-primary/30 flex items-center justify-center gap-3 mx-auto w-full sm:w-auto">
             Book A Strategy Call <ArrowRight className="w-5 h-5" />
-          </Link>
+          </a>
         </motion.div>
       </div>
     </section>
@@ -554,9 +462,9 @@ export default function Home() {
       {/* Value Prop Summary */}
       <section className="py-20 bg-primary text-white px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
+          <div className="grid md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
             <div className="pb-8 md:pb-0 md:px-6">
-              <h4 className="text-4xl font-black mb-2">$0</h4>
+              <h4 className="text-4xl font-black mb-2">₹0</h4>
               <p className="text-blue-100 font-medium">Upfront Management Fees</p>
             </div>
             <div className="py-8 md:py-0 md:px-6">
@@ -565,11 +473,7 @@ export default function Home() {
             </div>
             <div className="py-8 md:py-0 md:px-6">
               <h4 className="text-4xl font-black mb-2">100%</h4>
-              <p className="text-blue-100 font-medium">Results Focused</p>
-            </div>
-            <div className="pt-8 md:pt-0 md:px-6">
-              <h4 className="text-4xl font-black mb-2">1</h4>
-              <p className="text-blue-100 font-medium">Shared Goal</p>
+              <p className="text-blue-100 font-medium">Focused On Results</p>
             </div>
           </div>
         </div>
